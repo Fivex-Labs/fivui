@@ -12,7 +12,7 @@
   "files": [
     {
       "name": "combobox.tsx",
-      "content": ""
+      "template": "templates/combobox.tsx"
     }
   ]
 } 

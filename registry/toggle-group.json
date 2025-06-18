@@ -11,7 +11,7 @@
   "files": [
     {
       "name": "toggle-group.tsx",
-      "content": ""
+      "template": "templates/toggle-group.tsx"
     }
   ]
 } 

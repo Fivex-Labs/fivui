@@ -8,7 +8,7 @@
   "files": [
     {
       "name": "switch.tsx",
-      "content": ""
+      "template": "templates/switch.tsx"
     }
   ]
 } 

@@ -9,7 +9,7 @@
   "files": [
     {
       "name": "select.tsx",
-      "content": ""
+      "template": "templates/select.tsx"
     }
   ]
 } 

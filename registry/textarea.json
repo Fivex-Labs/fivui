@@ -6,7 +6,7 @@
   "files": [
     {
       "name": "textarea.tsx",
-      "content": ""
+      "template": "templates/textarea.tsx"
     }
   ]
 } 

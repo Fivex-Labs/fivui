@@ -11,7 +11,7 @@
   "files": [
     {
       "name": "command.tsx",
-      "content": ""
+      "template": "templates/command.tsx"
     }
   ]
 } 

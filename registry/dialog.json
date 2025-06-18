@@ -9,7 +9,7 @@
   "files": [
     {
       "name": "dialog.tsx",
-      "content": ""
+      "template": "templates/dialog.tsx"
     }
   ]
 } 

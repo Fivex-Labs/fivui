@@ -8,7 +8,7 @@
   "files": [
     {
       "name": "separator.tsx",
-      "content": ""
+      "template": "templates/separator.tsx"
     }
   ]
 } 

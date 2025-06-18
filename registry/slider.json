@@ -8,7 +8,7 @@
   "files": [
     {
       "name": "slider.tsx",
-      "content": ""
+      "template": "templates/slider.tsx"
     }
   ]
 } 

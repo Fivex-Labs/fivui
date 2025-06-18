@@ -8,7 +8,7 @@
   "files": [
     {
       "name": "popover.tsx",
-      "content": ""
+      "template": "templates/popover.tsx"
     }
   ]
 } 

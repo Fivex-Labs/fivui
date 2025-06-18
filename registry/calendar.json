@@ -14,6 +14,10 @@
       "template": "templates/calendar.tsx"
     }
   ],
+  "cssImports": [
+    "react-day-picker/style.css"
+  ],
+  "docs": "Import the default CSS styles from react-day-picker for proper calendar appearance. Add 'import \"react-day-picker/style.css\"' to your main CSS file or component.",
   "keyframes": {
     "calendar-v3": {
       "@layer utilities": {

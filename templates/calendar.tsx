@@ -66,19 +66,21 @@ function Calendar({
       startMonth={startMonth}
       endMonth={endMonth}
       formatters={{
-        formatMonthDropdown: (date) =>
-          date.toLocaleString("default", { month: "short" }),
+        formatMonthDropdown: (date) => {
+          const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+          return months[date.getMonth()];
+        },
       }}
       className={cn("p-3", className)}
       classNames={{
         root: cn(defaultClassNames.root, "rdp"),
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
-        month_caption: "flex justify-center pt-1 relative items-center",
+        month_caption: "flex justify-between pt-1 relative items-center",
         caption_label: cn("text-sm font-medium", showDropdowns && "hidden"),
         dropdowns: "flex justify-center gap-2 items-center",
         months_dropdown: cn(
-          "flex h-8 w-20 items-center justify-between rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background",
+          "flex h-8 w-16 items-center justify-between rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background",
           "placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
           "disabled:cursor-not-allowed disabled:opacity-50"
         ),
@@ -90,12 +92,12 @@ function Calendar({
         nav: "space-x-1 flex items-center",
         button_previous: cn(
           buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute left-1",
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
           showDropdowns && "hidden"
         ),
         button_next: cn(
           buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute right-1",
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
           showDropdowns && "hidden"
         ),
         month_grid: "w-full border-collapse space-y-1",
@@ -116,9 +118,9 @@ function Calendar({
           buttonVariants({ variant: "ghost" }),
           "h-9 w-9 p-0 font-normal aria-selected:opacity-100"
         ),
-        range_end: "day-range-end rounded-r-md",
-        range_start: "day-range-start rounded-l-md",
-        range_middle: "day-range-middle rounded-none",
+        range_end: "day-range-end rounded-l-none rounded-r-md",
+        range_start: "day-range-start rounded-r-none rounded-l-md", 
+        range_middle: "day-range-middle rounded-none bg-accent text-accent-foreground",
         selected:
           "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-md",
         today: "bg-accent text-accent-foreground rounded-md",

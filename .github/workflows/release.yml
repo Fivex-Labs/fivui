@@ -130,44 +130,38 @@ jobs:
           npm audit --audit-level high
 
       - name: Publish to npm
-        run: npm publish --provenance --access public
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  publish-github-packages:
-    needs: [check-version, build-and-test]
-    if: needs.check-version.outputs.should-release == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js for GitHub Packages
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@fivexlabs'
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Configure package for GitHub Packages
-        run: |
-          # Create a temporary package.json for GitHub Packages
-          jq '.publishConfig = {"registry": "https://npm.pkg.github.com", "@fivexlabs:registry": "https://npm.pkg.github.com"}' package.json > package-gh.json
-          mv package-gh.json package.json
-
-      - name: Publish to GitHub Packages
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # Temporarily disabled GitHub Packages publishing due to private repo restrictions
+  # publish-github-packages:
+  #   needs: [check-version, build-and-test]
+  #   if: needs.check-version.outputs.should-release == 'true'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #     - name: Setup Node.js for GitHub Packages
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20'
+  #         cache: 'npm'
+  #         registry-url: 'https://npm.pkg.github.com'
+  #     - name: Download build artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: build-artifacts
+  #     - name: Install dependencies
+  #       run: npm ci
+  #     - name: Configure package for GitHub Packages
+  #       run: |
+  #         jq '.name = "@fivexlabs/fivui" | .publishConfig = {"registry": "https://npm.pkg.github.com", "@fivexlabs:registry": "https://npm.pkg.github.com"}' package.json > package-gh.json
+  #         mv package-gh.json package.json
+  #     - name: Publish to GitHub Packages
+  #       run: npm publish
+  #       env:
+  #         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   create-release:
     needs: [check-version, publish-npm]
@@ -241,7 +235,7 @@ jobs:
           prerelease: ${{ contains(needs.check-version.outputs.version, '-') }}
 
   notify-success:
-    needs: [check-version, publish-npm, publish-github-packages, create-release]
+    needs: [check-version, publish-npm, create-release]
     if: always() && needs.check-version.outputs.should-release == 'true'
     runs-on: ubuntu-latest
     steps:
@@ -250,7 +244,6 @@ jobs:
         run: |
           echo "🎉 Successfully released FivUI v${{ needs.check-version.outputs.version }}"
           echo "✅ Published to npm"
-          echo "✅ Published to GitHub Packages"
           echo "✅ Created GitHub Release"
           echo "✅ Tagged repository"
 

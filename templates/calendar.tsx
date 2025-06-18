@@ -77,15 +77,15 @@ function Calendar({
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
         month_caption: "flex justify-between pt-1 relative items-center",
-        caption_label: cn("text-sm font-medium", showDropdowns && "hidden"),
-        dropdowns: "flex justify-center gap-2 items-center",
+        caption_label: cn("text-sm font-medium flex-1 text-center", showDropdowns && "hidden"),
+        dropdowns: "flex justify-center gap-2 items-center flex-1",
         months_dropdown: cn(
           "flex h-8 w-16 items-center justify-between rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background",
           "placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
           "disabled:cursor-not-allowed disabled:opacity-50"
         ),
         years_dropdown: cn(
-          "flex h-8 w-16 items-center justify-between rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background",
+          "flex h-8 w-20 items-center justify-between rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background",
           "placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
           "disabled:cursor-not-allowed disabled:opacity-50"
         ),

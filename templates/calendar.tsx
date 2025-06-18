@@ -70,8 +70,8 @@ function Calendar({
         root: cn(defaultClassNames.root, "rdp"),
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
-        month_caption: "flex justify-center pt-1 relative items-center",
-        caption_label: "text-sm font-medium",
+        month_caption: "flex justify-center items-center pt-1 pb-1",
+        caption_label: cn("text-sm font-medium", showDropdowns && "hidden"),
         dropdowns: "flex justify-center gap-1",
         months_dropdown: cn(
           "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background",
@@ -83,14 +83,16 @@ function Calendar({
           "placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
           "disabled:cursor-not-allowed disabled:opacity-50"
         ),
-        nav: "space-x-1 flex items-center",
+        nav: "flex items-center justify-between w-full",
         button_previous: cn(
           buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute left-1"
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+          showDropdowns && "hidden"
         ),
         button_next: cn(
           buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute right-1"
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+          showDropdowns && "hidden"
         ),
         month_grid: "w-full border-collapse space-y-1",
         weekdays: "flex",
@@ -109,11 +111,11 @@ function Calendar({
           buttonVariants({ variant: "ghost" }),
           "h-9 w-9 p-0 font-normal aria-selected:opacity-100"
         ),
-        range_end: "day-range-end",
-        range_start: "day-range-start",
+        range_end: "day-range-end rounded-r-md",
+        range_start: "day-range-start rounded-l-md",
         selected:
-          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-        today: "bg-accent text-accent-foreground",
+          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-md",
+        today: "bg-accent text-accent-foreground rounded-md",
         outside:
           "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
         disabled: "text-muted-foreground opacity-50",

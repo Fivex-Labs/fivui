@@ -1,0 +1,14 @@
+{
+  "name": "separator",
+  "type": "components:ui",
+  "dependencies": [
+    "@radix-ui/react-separator"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "separator.tsx",
+      "content": ""
+    }
+  ]
+} 

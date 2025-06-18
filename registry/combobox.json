@@ -1,0 +1,18 @@
+{
+  "name": "combobox",
+  "type": "components:ui",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "command",
+    "popover"
+  ],
+  "files": [
+    {
+      "name": "combobox.tsx",
+      "content": ""
+    }
+  ]
+} 

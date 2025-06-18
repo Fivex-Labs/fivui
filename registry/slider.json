@@ -1,0 +1,14 @@
+{
+  "name": "slider",
+  "type": "components:ui",
+  "dependencies": [
+    "@radix-ui/react-slider"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "slider.tsx",
+      "content": ""
+    }
+  ]
+} 

@@ -1,0 +1,15 @@
+{
+  "name": "dialog",
+  "type": "components:ui",
+  "dependencies": [
+    "@radix-ui/react-dialog",
+    "lucide-react"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "dialog.tsx",
+      "content": ""
+    }
+  ]
+} 

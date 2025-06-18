@@ -1,0 +1,17 @@
+{
+  "name": "command",
+  "type": "components:ui",
+  "dependencies": [
+    "cmdk",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "dialog"
+  ],
+  "files": [
+    {
+      "name": "command.tsx",
+      "content": ""
+    }
+  ]
+} 

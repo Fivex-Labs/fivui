@@ -1,0 +1,12 @@
+{
+  "name": "textarea",
+  "type": "components:ui",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "textarea.tsx",
+      "content": ""
+    }
+  ]
+} 

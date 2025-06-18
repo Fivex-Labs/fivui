@@ -1,0 +1,61 @@
+{
+  "name": "calendar",
+  "type": "components:ui",
+  "dependencies": [
+    "react-day-picker",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "name": "calendar.tsx",
+      "template": "templates/calendar.tsx"
+    }
+  ],
+  "keyframes": {
+    "calendar-v3": {
+      "@layer utilities": {
+        "@keyframes calendar-fade-in": {
+          "from": { "opacity": "0" },
+          "to": { "opacity": "1" }
+        },
+        "@keyframes calendar-fade-out": {
+          "from": { "opacity": "1" },
+          "to": { "opacity": "0" }
+        },
+        "@keyframes calendar-zoom-in": {
+          "from": { "opacity": "0", "transform": "scale(0.95)" },
+          "to": { "opacity": "1", "transform": "scale(1)" }
+        },
+        "@keyframes calendar-zoom-out": {
+          "from": { "opacity": "1", "transform": "scale(1)" },
+          "to": { "opacity": "0", "transform": "scale(0.95)" }
+        }
+      }
+    },
+    "calendar-v4": {
+      "@theme": {
+        "keyframes": {
+          "calendar-fade-in": {
+            "from": { "opacity": "0" },
+            "to": { "opacity": "1" }
+          },
+          "calendar-fade-out": {
+            "from": { "opacity": "1" },
+            "to": { "opacity": "0" }
+          },
+          "calendar-zoom-in": {
+            "from": { "opacity": "0", "transform": "scale(0.95)" },
+            "to": { "opacity": "1", "transform": "scale(1)" }
+          },
+          "calendar-zoom-out": {
+            "from": { "opacity": "1", "transform": "scale(1)" },
+            "to": { "opacity": "0", "transform": "scale(0.95)" }
+          }
+        }
+      }
+    }
+  }
+} 

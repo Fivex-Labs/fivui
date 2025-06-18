@@ -1,0 +1,15 @@
+{
+  "name": "context-menu",
+  "type": "components:ui",
+  "dependencies": [
+    "@radix-ui/react-context-menu",
+    "lucide-react"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "context-menu.tsx",
+      "template": "templates/context-menu.tsx"
+    }
+  ]
+} 

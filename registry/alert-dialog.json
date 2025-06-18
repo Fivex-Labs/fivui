@@ -1,0 +1,14 @@
+{
+  "name": "alert-dialog",
+  "type": "components:ui",
+  "dependencies": [
+    "@radix-ui/react-alert-dialog"
+  ],
+  "registryDependencies": ["utils", "button"],
+  "files": [
+    {
+      "name": "alert-dialog.tsx",
+      "template": "templates/alert-dialog.tsx"
+    }
+  ]
+} 

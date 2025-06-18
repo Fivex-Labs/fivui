@@ -1,0 +1,15 @@
+{
+  "name": "checkbox",
+  "type": "components:ui",
+  "dependencies": [
+    "@radix-ui/react-checkbox",
+    "lucide-react"
+  ],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "name": "checkbox.tsx",
+      "template": "templates/checkbox.tsx"
+    }
+  ]
+} 

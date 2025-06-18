@@ -1,0 +1,12 @@
+{
+  "name": "code-block",
+  "type": "components:ui",
+  "dependencies": ["lucide-react", "class-variance-authority", "prism-react-renderer"],
+  "registryDependencies": ["button"],
+  "files": [
+    {
+      "name": "code-block.tsx",
+      "template": "templates/code-block.tsx"
+    }
+  ]
+} 

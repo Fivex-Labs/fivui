@@ -1,0 +1,10 @@
+/* My existing custom styles */
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+}
+
+.my-custom-class {
+  color: blue;
+  padding: 20px;
+} 

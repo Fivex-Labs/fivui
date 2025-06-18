@@ -1,0 +1,27 @@
+{
+  "name": "accordion",
+  "type": "components:ui",
+  "dependencies": [
+    "@radix-ui/react-accordion",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "keyframes": [
+    {
+      "name": "accordion-v3",
+      "css": "@layer utilities {\n  .animate-accordion-down {\n    animation: accordion-down 0.2s ease-out;\n  }\n  .animate-accordion-up {\n    animation: accordion-up 0.2s ease-out;\n  }\n}\n\n@keyframes accordion-down {\n  from {\n    height: 0;\n  }\n  to {\n    height: var(--radix-accordion-content-height);\n  }\n}\n\n@keyframes accordion-up {\n  from {\n    height: var(--radix-accordion-content-height);\n  }\n  to {\n    height: 0;\n  }\n}"
+    },
+    {
+      "name": "accordion-v4",
+      "css": "@theme {\n  --animate-accordion-down: accordion-down 0.2s ease-out;\n  --animate-accordion-up: accordion-up 0.2s ease-out;\n\n  @keyframes accordion-down {\n    from {\n      height: 0;\n    }\n    to {\n      height: var(--radix-accordion-content-height);\n    }\n  }\n\n  @keyframes accordion-up {\n    from {\n      height: var(--radix-accordion-content-height);\n    }\n    to {\n      height: 0;\n    }\n  }\n}"
+    }
+  ],
+  "files": [
+    {
+      "name": "accordion.tsx",
+      "template": "templates/accordion.tsx"
+    }
+  ]
+} 

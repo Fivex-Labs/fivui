@@ -1,0 +1,15 @@
+{
+  "name": "toggle",
+  "type": "components:ui",
+  "dependencies": [
+    "@radix-ui/react-toggle",
+    "class-variance-authority"
+  ],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "name": "toggle.tsx",
+      "template": "templates/toggle.tsx"
+    }
+  ]
+} 

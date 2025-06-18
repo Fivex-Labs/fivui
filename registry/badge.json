@@ -1,0 +1,14 @@
+{
+  "name": "badge",
+  "type": "components:ui",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "name": "badge.tsx",
+      "template": "templates/badge.tsx"
+    }
+  ]
+} 

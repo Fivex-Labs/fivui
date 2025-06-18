@@ -1,0 +1,14 @@
+{
+  "name": "aspect-ratio",
+  "type": "components:ui",
+  "dependencies": [
+    "@radix-ui/react-aspect-ratio"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "aspect-ratio.tsx",
+      "template": "templates/aspect-ratio.tsx"
+    }
+  ]
+} 

@@ -1,0 +1,14 @@
+{
+  "name": "alert",
+  "type": "components:ui",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "name": "alert.tsx",
+      "template": "templates/alert.tsx"
+    }
+  ]
+} 

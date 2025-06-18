@@ -1,0 +1,14 @@
+{
+  "name": "avatar",
+  "type": "components:ui",
+  "dependencies": [
+    "@radix-ui/react-avatar"
+  ],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "name": "avatar.tsx",
+      "template": "templates/avatar.tsx"
+    }
+  ]
+} 

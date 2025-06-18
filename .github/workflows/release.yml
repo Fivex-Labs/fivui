@@ -3,11 +3,6 @@ name: Release and Publish
 on:
   push:
     branches: [main]
-    paths:
-      - 'package.json'
-      - 'src/**'
-      - 'templates/**'
-      - 'registry/**'
   workflow_dispatch:
     inputs:
       force_release:

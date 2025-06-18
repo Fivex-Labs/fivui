@@ -1,0 +1,265 @@
+name: Release and Publish
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'src/**'
+      - 'templates/**'
+      - 'registry/**'
+  workflow_dispatch:
+    inputs:
+      force_release:
+        description: 'Force release even if version unchanged'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.package-version.outputs.version }}
+      version-changed: ${{ steps.version-check.outputs.changed }}
+      should-release: ${{ steps.should-release.outputs.result }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get package version
+        id: package-version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Current package.json version: $VERSION"
+
+      - name: Check if version changed
+        id: version-check
+        run: |
+          git fetch --tags
+          if git rev-parse "v${{ steps.package-version.outputs.version }}" >/dev/null 2>&1; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "Version v${{ steps.package-version.outputs.version }} already exists"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Version v${{ steps.package-version.outputs.version }} is new"
+          fi
+
+      - name: Should release
+        id: should-release
+        run: |
+          if [[ "${{ steps.version-check.outputs.changed }}" == "true" || "${{ github.event.inputs.force_release }}" == "true" ]]; then
+            echo "result=true" >> $GITHUB_OUTPUT
+            echo "Will proceed with release"
+          else
+            echo "result=false" >> $GITHUB_OUTPUT
+            echo "Skipping release - version unchanged"
+          fi
+
+  build-and-test:
+    needs: check-version
+    if: needs.check-version.outputs.should-release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test --if-present
+
+      - name: Build project
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            dist/
+            package.json
+            README.md
+            CHANGELOG.md
+            LICENSE
+            registry/
+            templates/
+          retention-days: 1
+
+  publish-npm:
+    needs: [check-version, build-and-test]
+    if: needs.check-version.outputs.should-release == 'true'
+    runs-on: ubuntu-latest
+    environment: npm-publish
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify package integrity
+        run: |
+          npm pack --dry-run
+          npm audit --audit-level high
+
+      - name: Publish to npm
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-github-packages:
+    needs: [check-version, build-and-test]
+    if: needs.check-version.outputs.should-release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js for GitHub Packages
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@fivexlabs'
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure package for GitHub Packages
+        run: |
+          # Create a temporary package.json for GitHub Packages
+          jq '.publishConfig = {"registry": "https://npm.pkg.github.com", "@fivexlabs:registry": "https://npm.pkg.github.com"}' package.json > package-gh.json
+          mv package-gh.json package.json
+
+      - name: Publish to GitHub Packages
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  create-release:
+    needs: [check-version, publish-npm]
+    if: needs.check-version.outputs.should-release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          VERSION="${{ needs.check-version.outputs.version }}"
+          
+          # Try to get the previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+          
+          echo "## What's Changed" > changelog.md
+          echo "" >> changelog.md
+          
+          if [[ -n "$PREV_TAG" ]]; then
+            echo "### Commits since $PREV_TAG" >> changelog.md
+            git log --pretty=format:"- %s (%h)" $PREV_TAG..HEAD >> changelog.md
+          else
+            echo "### All commits" >> changelog.md
+            git log --pretty=format:"- %s (%h)" >> changelog.md
+          fi
+          
+          echo "" >> changelog.md
+          echo "## Installation" >> changelog.md
+          echo "" >> changelog.md
+          echo '```bash' >> changelog.md
+          echo "npm install -g @fivexlabs/fivui@$VERSION" >> changelog.md
+          echo '```' >> changelog.md
+          echo "" >> changelog.md
+          echo "## Components Available" >> changelog.md
+          echo "- Accordion, Alert, Alert Dialog, Aspect Ratio, Avatar" >> changelog.md
+          echo "- Badge, Breadcrumb, Button, Checkbox, Code Block" >> changelog.md
+          echo "- Input, Label, Table, Toggle" >> changelog.md
+          
+          # Set output for release body
+          {
+            echo 'changelog<<EOF'
+            cat changelog.md
+            echo EOF
+          } >> $GITHUB_OUTPUT
+
+      - name: Create Git tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${{ needs.check-version.outputs.version }}" -m "Release v${{ needs.check-version.outputs.version }}"
+          git push origin "v${{ needs.check-version.outputs.version }}"
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ needs.check-version.outputs.version }}
+          release_name: FivUI v${{ needs.check-version.outputs.version }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: ${{ contains(needs.check-version.outputs.version, '-') }}
+
+  notify-success:
+    needs: [check-version, publish-npm, publish-github-packages, create-release]
+    if: always() && needs.check-version.outputs.should-release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report success
+        if: needs.publish-npm.result == 'success' && needs.create-release.result == 'success'
+        run: |
+          echo "🎉 Successfully released FivUI v${{ needs.check-version.outputs.version }}"
+          echo "✅ Published to npm"
+          echo "✅ Published to GitHub Packages"
+          echo "✅ Created GitHub Release"
+          echo "✅ Tagged repository"
+
+      - name: Report failure
+        if: needs.publish-npm.result == 'failure' || needs.create-release.result == 'failure'
+        run: |
+          echo "❌ Release failed for FivUI v${{ needs.check-version.outputs.version }}"
+          echo "Check the logs above for details"
+          exit 1 

@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'fs';
-import { resolve, join, dirname, relative } from 'path';
+import { join, dirname, relative } from 'path';
 import type { WorkspaceInfo, ComponentsConfig } from './schemas';
 
 export function detectWorkspace(cwd: string = process.cwd()): WorkspaceInfo {

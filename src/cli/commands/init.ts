@@ -2,7 +2,7 @@ import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'fs';
 import { join, resolve } from 'path';
 import prompts from 'prompts';
 import type { ComponentsConfig } from '../../lib/schemas';
-import { DEFAULT_COMPONENTS_CONFIG, MONOREPO_COMPONENTS_CONFIG } from '../../lib/schemas';
+// import { DEFAULT_COMPONENTS_CONFIG, MONOREPO_COMPONENTS_CONFIG } from '../../lib/schemas';
 import { detectWorkspace } from '../../lib/workspace';
 
 export interface InitOptions {
@@ -33,7 +33,7 @@ export async function initProject(options: InitOptions = {}) {
   }
 }
 
-async function runInteractiveSetup(cliOptions: InitOptions) {
+async function runInteractiveSetup(_cliOptions: InitOptions) {
   const workspace = detectWorkspace();
   
   try {
@@ -155,7 +155,7 @@ async function runInteractiveSetup(cliOptions: InitOptions) {
 
     // Proceed with setup
     console.log('\n🔧 Setting up FivUI...');
-    await executeSetup(responses, workspace, cliOptions);
+    await executeSetup(responses, workspace, _cliOptions);
     
   } catch (error) {
     console.error('\n❌ Setup failed:', error);
@@ -207,7 +207,7 @@ async function checkExistingFiles(responses: any, workspace: any, existingConfig
   return questions;
 }
 
-async function executeSetup(responses: any, workspace: any, cliOptions: InitOptions) {
+async function executeSetup(responses: any, workspace: any, _cliOptions: InitOptions) {
   const isMonorepo = workspace.type !== 'single';
   
   // Create configuration
@@ -252,7 +252,7 @@ async function executeSetup(responses: any, workspace: any, cliOptions: InitOpti
   showSetupComplete(responses);
 }
 
-function createDirectoryStructure(workspace: any, responses: any, isMonorepo: boolean) {
+function createDirectoryStructure(workspace: any, _responses: any, isMonorepo: boolean) {
   if (isMonorepo) {
     // Create monorepo structure
     const uiPackageDir = join(workspace.root, 'packages', 'ui');

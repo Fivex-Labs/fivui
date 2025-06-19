@@ -272,7 +272,7 @@ function resolveCssPath(config: any, workspace: any): string {
 program
   .name('fivui')
   .description('FivUI - Modern UI Component Library CLI')
-  .version('0.13.4');
+  .version('0.13.5');
 
 program
   .command('init')
@@ -308,14 +308,44 @@ program
 program
   .command('add')
   .description('Add components to your project')
-  .argument('[component]', 'Component name to add')
-  .action((component) => {
-    if (component) {
-      copyComponent(component);
+  .argument('<components...>', 'Component names to add')
+  .action((components) => {
+    if (components && components.length > 0) {
+      console.log(`\n🚀 Adding ${components.length} component${components.length > 1 ? 's' : ''}: ${components.join(', ')}\n`);
+      
+      const processedComponents = new Set<string>();
+      let successCount = 0;
+      let failureCount = 0;
+      
+      for (const component of components) {
+        if (processedComponents.has(component)) {
+          console.log(`⏭️  Skipping ${component} (already processed)`);
+          continue;
+        }
+        
+        try {
+          console.log(`📦 Processing ${component}...`);
+          copyComponent(component);
+          processedComponents.add(component);
+          successCount++;
+        } catch (error) {
+          console.log(`❌ Failed to add ${component}`);
+          failureCount++;
+        }
+      }
+      
+      console.log(`\n📊 Summary:`);
+      console.log(`✅ Successfully added: ${successCount} component${successCount !== 1 ? 's' : ''}`);
+      if (failureCount > 0) {
+        console.log(`❌ Failed to add: ${failureCount} component${failureCount !== 1 ? 's' : ''}`);
+      }
     } else {
-      console.log('\n❌ Please specify a component name after "add".');
-      console.log('Usage: fivui add <component>');
-      console.log('\nExample: fivui add button');
+      console.log('\n❌ Please specify one or more component names after "add".');
+      console.log('Usage: fivui add <component> [component2] [component3] ...');
+      console.log('\nExamples:');
+      console.log('  fivui add button');
+      console.log('  fivui add button calendar popover');
+      console.log('  fivui add button input select checkbox');
     }
   });
 
@@ -325,7 +355,7 @@ program.action(() => {
   const isMonorepo = workspace.type !== 'single';
   
   console.log('\n🎨 FivUI - Modern UI Component Library');
-  console.log('Version: 0.13.4\n');
+  console.log('Version: 0.13.5\n');
   
   if (isMonorepo) {
     console.log(`🏢 Detected ${workspace.type} monorepo`);

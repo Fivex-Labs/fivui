@@ -1,0 +1,23 @@
+{
+  "name": "data-table",
+  "type": "components:ui",
+  "dependencies": [
+    "@tanstack/react-table",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "checkbox",
+    "dropdown-menu",
+    "input",
+    "select",
+    "table",
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "data-table.tsx",
+      "template": "templates/data-table.tsx"
+    }
+  ]
+} 

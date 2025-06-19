@@ -1,0 +1,17 @@
+{
+  "name": "dropdown-menu",
+  "type": "components:ui",
+  "dependencies": [
+    "@radix-ui/react-dropdown-menu",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "dropdown-menu.tsx",
+      "template": "templates/dropdown-menu.tsx"
+    }
+  ]
+} 

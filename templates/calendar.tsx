@@ -35,11 +35,13 @@ function Calendar({
         className
       )}
       captionLayout={captionLayout}
-      formatters={{
-        formatMonthDropdown: (date) =>
-          date.toLocaleString("default", { month: "short" }),
-        ...formatters,
-      }}
+             formatters={{
+         formatMonthDropdown: (date) => {
+           const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+           return months[date.getMonth()];
+         },
+         ...formatters,
+       }}
       classNames={{
         root: cn("w-fit", defaultClassNames.root),
         months: cn(

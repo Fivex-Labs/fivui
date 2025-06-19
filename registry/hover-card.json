@@ -1,0 +1,16 @@
+{
+  "name": "hover-card",
+  "type": "components:ui",
+  "dependencies": [
+    "@radix-ui/react-hover-card"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "hover-card.tsx",
+      "template": "templates/hover-card.tsx"
+    }
+  ]
+} 

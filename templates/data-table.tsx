@@ -106,19 +106,35 @@ interface DataTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>
   title: string
+  align?: "start" | "center" | "end"
+  canSort?: boolean
+  canHide?: boolean
 }
 
 export function DataTableColumnHeader<TData, TValue>({
   column,
   title,
+  align = "start",
+  canSort = true,
+  canHide = true,
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
-  if (!column.getCanSort()) {
-    return <div className={cn(className)}>{title}</div>
+  const alignmentClasses = {
+    start: "justify-start text-left",
+    center: "justify-center text-center",
+    end: "justify-end text-right",
+  }
+
+  if (!canSort || !column.getCanSort()) {
+    return (
+      <div className={cn("flex items-center gap-2", alignmentClasses[align], className)}>
+        {title}
+      </div>
+    )
   }
 
   return (
-    <div className={cn("flex items-center gap-2", className)}>
+    <div className={cn("flex items-center gap-2", alignmentClasses[align], className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -145,11 +161,15 @@ export function DataTableColumnHeader<TData, TValue>({
             <ArrowDown className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
             Desc
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-            <EyeOff className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-            Hide
-          </DropdownMenuItem>
+          {canHide && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
+                <EyeOff className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+                Hide
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
@@ -159,80 +179,130 @@ export function DataTableColumnHeader<TData, TValue>({
 // Pagination Component
 interface DataTablePaginationProps<TData> {
   table: TanStackTable<TData>
+  showRowSelection?: boolean
+  showRowsPerPage?: boolean
+  showPageInfo?: boolean
+  showFirstLastButtons?: boolean
+  showPreviousNextButtons?: boolean
+  pageSizeOptions?: number[]
+  rowSelectionText?: string
+  rowsPerPageText?: string
+  pageInfoFormat?: (currentPage: number, totalPages: number) => string
+  onPageChange?: (page: number) => void
+  onPageSizeChange?: (pageSize: number) => void
 }
 
 export function DataTablePagination<TData>({
   table,
+  showRowSelection = true,
+  showRowsPerPage = true,
+  showPageInfo = true,
+  showFirstLastButtons = true,
+  showPreviousNextButtons = true,
+  pageSizeOptions = [10, 20, 25, 30, 40, 50],
+  rowSelectionText = "row(s) selected",
+  rowsPerPageText = "Rows per page",
+  pageInfoFormat = (currentPage, totalPages) => `Page ${currentPage} of ${totalPages}`,
+  onPageChange,
+  onPageSizeChange,
 }: DataTablePaginationProps<TData>) {
+  const currentPage = table.getState().pagination.pageIndex + 1
+  const totalPages = table.getPageCount()
+  const selectedRows = table.getFilteredSelectedRowModel().rows.length
+  const totalRows = table.getFilteredRowModel().rows.length
+
+  const handlePageSizeChange = (value: string) => {
+    const newPageSize = Number(value)
+    table.setPageSize(newPageSize)
+    onPageSizeChange?.(newPageSize)
+  }
+
+  const handlePageChange = (newPage: number) => {
+    table.setPageIndex(newPage - 1)
+    onPageChange?.(newPage)
+  }
+
   return (
-    <div className="flex items-center justify-between px-2">
-      <div className="flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
-      </div>
-      <div className="flex items-center space-x-6 lg:space-x-8">
-        <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
-          <Select
-            value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value) => {
-              table.setPageSize(Number(value))
-            }}
-          >
-            <SelectTrigger className="h-8 w-[70px]">
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
-            </SelectTrigger>
-            <SelectContent side="top">
-              {[10, 20, 25, 30, 40, 50].map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-2">
+      {showRowSelection && (
+        <div className="flex-1 text-sm text-muted-foreground">
+          {selectedRows} of {totalRows} {rowSelectionText}.
         </div>
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <span className="sr-only">Go to first page</span>
-            <ChevronsLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            className="h-8 w-8 p-0"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <span className="sr-only">Go to previous page</span>
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            className="h-8 w-8 p-0"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            <span className="sr-only">Go to next page</span>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-          >
-            <span className="sr-only">Go to last page</span>
-            <ChevronsRight className="h-4 w-4" />
-          </Button>
-        </div>
+      )}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6 lg:gap-8">
+        {showRowsPerPage && (
+          <div className="flex items-center space-x-2">
+            <p className="text-sm font-medium">{rowsPerPageText}</p>
+            <Select
+              value={`${table.getState().pagination.pageSize}`}
+              onValueChange={handlePageSizeChange}
+            >
+              <SelectTrigger className="h-8 w-[70px]">
+                <SelectValue placeholder={table.getState().pagination.pageSize} />
+              </SelectTrigger>
+              <SelectContent side="top">
+                {pageSizeOptions.map((pageSize) => (
+                  <SelectItem key={pageSize} value={`${pageSize}`}>
+                    {pageSize}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+        {showPageInfo && (
+          <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+            {pageInfoFormat(currentPage, totalPages)}
+          </div>
+        )}
+        {(showFirstLastButtons || showPreviousNextButtons) && (
+          <div className="flex items-center space-x-2">
+            {showFirstLastButtons && (
+              <Button
+                variant="outline"
+                className="hidden h-8 w-8 p-0 lg:flex"
+                onClick={() => handlePageChange(1)}
+                disabled={!table.getCanPreviousPage()}
+              >
+                <span className="sr-only">Go to first page</span>
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
+            )}
+            {showPreviousNextButtons && (
+              <Button
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={!table.getCanPreviousPage()}
+              >
+                <span className="sr-only">Go to previous page</span>
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+            )}
+            {showPreviousNextButtons && (
+              <Button
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={!table.getCanNextPage()}
+              >
+                <span className="sr-only">Go to next page</span>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            )}
+            {showFirstLastButtons && (
+              <Button
+                variant="outline"
+                className="hidden h-8 w-8 p-0 lg:flex"
+                onClick={() => handlePageChange(totalPages)}
+                disabled={!table.getCanNextPage()}
+              >
+                <span className="sr-only">Go to last page</span>
+                <ChevronsRight className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
@@ -475,11 +545,47 @@ export function DataTableDemo() {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  sortableColumns?: string[]
+  hideableColumns?: string[]
+  searchColumn?: string
+  showSearch?: boolean
+  onSearch?: (value: string) => void
+  searchPlaceholder?: string
+  // Pagination props
+  showRowSelection?: boolean
+  showRowsPerPage?: boolean
+  showPageInfo?: boolean
+  showFirstLastButtons?: boolean
+  showPreviousNextButtons?: boolean
+  pageSizeOptions?: number[]
+  rowSelectionText?: string
+  rowsPerPageText?: string
+  pageInfoFormat?: (currentPage: number, totalPages: number) => string
+  onPageChange?: (page: number) => void
+  onPageSizeChange?: (pageSize: number) => void
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  sortableColumns = [],
+  hideableColumns = [],
+  searchColumn,
+  showSearch = true,
+  onSearch,
+  searchPlaceholder = "Search...",
+  // Pagination props
+  showRowSelection = true,
+  showRowsPerPage = true,
+  showPageInfo = true,
+  showFirstLastButtons = true,
+  showPreviousNextButtons = true,
+  pageSizeOptions = [10, 20, 25, 30, 40, 50],
+  rowSelectionText = "row(s) selected",
+  rowsPerPageText = "Rows per page",
+  pageInfoFormat = (currentPage, totalPages) => `Page ${currentPage} of ${totalPages}`,
+  onPageChange,
+  onPageSizeChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -510,9 +616,26 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        <DataTableViewOptions table={table} />
-      </div>
+      {showSearch && searchColumn && (
+        <div className="flex items-center py-4">
+          <Input
+            placeholder={searchPlaceholder}
+            value={(table.getColumn(searchColumn)?.getFilterValue() as string) ?? ""}
+            onChange={(event) => {
+              const value = event.target.value
+              table.getColumn(searchColumn)?.setFilterValue(value)
+              onSearch?.(value)
+            }}
+            className="max-w-sm"
+          />
+          <DataTableViewOptions table={table} hideableColumns={hideableColumns} />
+        </div>
+      )}
+      {!showSearch && (
+        <div className="flex items-center py-4">
+          <DataTableViewOptions table={table} hideableColumns={hideableColumns} />
+        </div>
+      )}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -563,8 +686,21 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <DataTablePagination table={table} />
+      <div className="py-4">
+        <DataTablePagination 
+          table={table}
+          showRowSelection={showRowSelection}
+          showRowsPerPage={showRowsPerPage}
+          showPageInfo={showPageInfo}
+          showFirstLastButtons={showFirstLastButtons}
+          showPreviousNextButtons={showPreviousNextButtons}
+          pageSizeOptions={pageSizeOptions}
+          rowSelectionText={rowSelectionText}
+          rowsPerPageText={rowsPerPageText}
+          pageInfoFormat={pageInfoFormat}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
+        />
       </div>
     </div>
   )

@@ -1,0 +1,17 @@
+{
+  "name": "menubar",
+  "type": "components:ui",
+  "dependencies": [
+    "@radix-ui/react-menubar",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "menubar.tsx",
+      "template": "templates/menubar.tsx"
+    }
+  ]
+} 

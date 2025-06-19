@@ -3,6 +3,7 @@
   "type": "components:ui",
   "dependencies": [
     "react-day-picker",
+    "date-fns",
     "lucide-react"
   ],
   "registryDependencies": [

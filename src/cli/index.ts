@@ -272,7 +272,7 @@ function resolveCssPath(config: any, workspace: any): string {
 program
   .name('fivui')
   .description('FivUI - Modern UI Component Library CLI')
-  .version('0.12.9');
+  .version('0.13.0');
 
 program
   .command('init')

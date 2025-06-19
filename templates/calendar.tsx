@@ -76,9 +76,9 @@ function Calendar({
         root: cn(defaultClassNames.root, "rdp"),
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
-        month_caption: "flex justify-center pt-1 relative items-center",
-        caption_label: cn("text-sm font-medium flex-1 text-center", showDropdowns && "hidden"),
-        dropdowns: "flex justify-center gap-2 items-center flex-1",
+        month_caption: "flex justify-center pt-1 relative items-center h-10",
+        caption_label: cn("text-sm font-medium", showDropdowns && "hidden"),
+        dropdowns: "flex justify-center gap-2 items-center",
         months_dropdown: cn(
           "flex h-8 w-16 items-center justify-between rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background",
           "placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
@@ -89,15 +89,15 @@ function Calendar({
           "placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
           "disabled:cursor-not-allowed disabled:opacity-50"
         ),
-        nav: "space-x-1 flex items-center justify-between w-full",
+        nav: "flex items-center absolute inset-0 justify-between pointer-events-none",
         button_previous: cn(
           buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 pointer-events-auto",
           showDropdowns && "hidden"
         ),
         button_next: cn(
           buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 pointer-events-auto",
           showDropdowns && "hidden"
         ),
         month_grid: "w-full border-collapse space-y-1",

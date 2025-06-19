@@ -1,19 +1,17 @@
 {
-  "name": "date-picker",
+  "name": "pagination",
   "type": "components:ui",
   "dependencies": [
-    "date-fns",
     "lucide-react"
   ],
   "registryDependencies": [
     "button",
-    "calendar",
-    "popover"
+    "utils"
   ],
   "files": [
     {
-      "name": "date-picker.tsx",
-      "template": "templates/date-picker.tsx"
+      "name": "pagination.tsx",
+      "template": "templates/pagination.tsx"
     }
   ]
 } 

@@ -1,6 +1,6 @@
 {
   "name": "@fivexlabs/fivui",
-  "version": "0.12.6",
+  "version": "0.12.7",
   "description": "A modern, lightweight UI component library CLI for React and Next.js applications, built with TailwindCSS",
   "type": "module",
   "engines": {

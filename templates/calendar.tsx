@@ -76,7 +76,7 @@ function Calendar({
         root: cn(defaultClassNames.root, "rdp"),
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
-        month_caption: "flex justify-between pt-1 relative items-center",
+        month_caption: "flex justify-center pt-1 relative items-center",
         caption_label: cn("text-sm font-medium flex-1 text-center", showDropdowns && "hidden"),
         dropdowns: "flex justify-center gap-2 items-center flex-1",
         months_dropdown: cn(
@@ -89,7 +89,7 @@ function Calendar({
           "placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
           "disabled:cursor-not-allowed disabled:opacity-50"
         ),
-        nav: "space-x-1 flex items-center",
+        nav: "space-x-1 flex items-center justify-between w-full",
         button_previous: cn(
           buttonVariants({ variant: "outline" }),
           "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",

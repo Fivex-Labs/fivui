@@ -1,0 +1,12 @@
+{
+  "name": "input-otp",
+  "type": "components:ui",
+  "dependencies": ["input-otp", "lucide-react"],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "name": "input-otp.tsx",
+      "template": "templates/input-otp.tsx"
+    }
+  ]
+} 

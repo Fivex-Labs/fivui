@@ -1,0 +1,12 @@
+{
+  "name": "drawer",
+  "type": "components:ui",
+  "dependencies": ["vaul"],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "name": "drawer.tsx",
+      "template": "templates/drawer.tsx"
+    }
+  ]
+} 

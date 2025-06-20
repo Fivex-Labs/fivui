@@ -1,0 +1,12 @@
+{
+  "name": "sonner",
+  "type": "components:ui",
+  "dependencies": ["next-themes", "sonner"],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "sonner.tsx",
+      "template": "templates/sonner.tsx"
+    }
+  ]
+} 

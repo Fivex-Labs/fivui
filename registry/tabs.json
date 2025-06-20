@@ -1,0 +1,12 @@
+{
+  "name": "tabs",
+  "type": "components:ui",
+  "dependencies": ["@radix-ui/react-tabs"],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "name": "tabs.tsx",
+      "template": "templates/tabs.tsx"
+    }
+  ]
+} 

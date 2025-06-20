@@ -1,0 +1,12 @@
+{
+  "name": "navigation-menu",
+  "type": "components:ui",
+  "dependencies": ["@radix-ui/react-navigation-menu", "lucide-react"],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "name": "navigation-menu.tsx",
+      "template": "templates/navigation-menu.tsx"
+    }
+  ]
+} 

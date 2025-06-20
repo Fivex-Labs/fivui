@@ -1,0 +1,12 @@
+{
+  "name": "progress",
+  "type": "components:ui",
+  "dependencies": ["@radix-ui/react-progress"],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "name": "progress.tsx",
+      "template": "templates/progress.tsx"
+    }
+  ]
+} 

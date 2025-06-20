@@ -272,7 +272,7 @@ function resolveCssPath(config: any, workspace: any): string {
 program
   .name('fivui')
   .description('FivUI - Modern UI Component Library CLI')
-  .version('0.13.11');
+  .version('0.13.12');
 
 program
   .command('init')
@@ -355,7 +355,7 @@ program.action(() => {
   const isMonorepo = workspace.type !== 'single';
   
   console.log('\n🎨 FivUI - Modern UI Component Library');
-  console.log('Version: 0.13.11\n');
+  console.log('Version: 0.13.12\n');
   
   if (isMonorepo) {
     console.log(`🏢 Detected ${workspace.type} monorepo`);

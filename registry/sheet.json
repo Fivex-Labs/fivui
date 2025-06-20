@@ -1,0 +1,12 @@
+{
+  "name": "sheet",
+  "type": "components:ui",
+  "dependencies": ["@radix-ui/react-dialog", "lucide-react"],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "name": "sheet.tsx",
+      "template": "templates/sheet.tsx"
+    }
+  ]
+} 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'fs';
 import { resolve, join, dirname } from 'path';
 import { execSync } from 'child_process';
 import { detectWorkspace, loadComponentsConfig, findComponentsConfig, resolveComponentPath } from '../lib/workspace.js';
@@ -269,10 +269,77 @@ function resolveCssPath(config: any, workspace: any): string {
   }
 }
 
+function getAllAvailableComponents(): string[] {
+  try {
+    const packageRoot = resolve(__dirname, '../..');
+    const registryDir = join(packageRoot, 'registry');
+    
+    if (!existsSync(registryDir)) {
+      return [];
+    }
+    
+    const files = readdirSync(registryDir);
+    return files
+      .filter(file => file.endsWith('.json'))
+      .map(file => file.replace('.json', ''))
+      .sort();
+  } catch (error) {
+    console.log('❌ Failed to read registry directory');
+    return [];
+  }
+}
+
+function addAllComponents() {
+  const allComponents = getAllAvailableComponents();
+  
+  if (allComponents.length === 0) {
+    console.log('\n❌ No components found in registry.');
+    return;
+  }
+  
+  console.log(`\n🚀 Installing all ${allComponents.length} FivUI components...\n`);
+  console.log(`📦 Components to install: ${allComponents.join(', ')}\n`);
+  
+  const processedComponents = new Set<string>();
+  let successCount = 0;
+  let failureCount = 0;
+  const failedComponents: string[] = [];
+  
+  for (const component of allComponents) {
+    if (processedComponents.has(component)) {
+      console.log(`⏭️  Skipping ${component} (already processed)`);
+      continue;
+    }
+    
+    try {
+      console.log(`📦 Processing ${component}...`);
+      copyComponent(component);
+      processedComponents.add(component);
+      successCount++;
+    } catch (error) {
+      console.log(`❌ Failed to add ${component}`);
+      failedComponents.push(component);
+      failureCount++;
+    }
+  }
+  
+  console.log(`\n📊 Installation Summary:`);
+  console.log(`✅ Successfully installed: ${successCount} component${successCount !== 1 ? 's' : ''}`);
+  if (failureCount > 0) {
+    console.log(`❌ Failed to install: ${failureCount} component${failureCount !== 1 ? 's' : ''}`);
+    console.log(`   Failed components: ${failedComponents.join(', ')}`);
+  }
+  
+  if (successCount === allComponents.length) {
+    console.log('\n🎉 All FivUI components have been successfully installed!');
+    console.log('You now have access to the complete FivUI component library.');
+  }
+}
+
 program
   .name('fivui')
   .description('FivUI - Modern UI Component Library CLI')
-  .version('1.0.1');
+  .version('1.0.2');
 
 program
   .command('init')
@@ -349,13 +416,20 @@ program
     }
   });
 
+program
+  .command('add-all')
+  .description('Add all available components to your project')
+  .action(() => {
+    addAllComponents();
+  });
+
 // Default action
 program.action(() => {
   const workspace = detectWorkspace();
   const isMonorepo = workspace.type !== 'single';
   
   console.log('\n🎨 FivUI - Modern UI Component Library');
-  console.log('Version: 1.0.1\n');
+  console.log('Version: 1.0.2\n');
   
   if (isMonorepo) {
     console.log(`🏢 Detected ${workspace.type} monorepo`);
@@ -366,6 +440,7 @@ program.action(() => {
   console.log('  fivui init     Initialize FivUI in your project');
   console.log('  fivui setup    Show setup instructions');
   console.log('  fivui add      Add components to your project');
+  console.log('  fivui add-all  Add all available components');
   console.log('  fivui --help   Show all commands');
   console.log('\nRequires TailwindCSS v4.x or higher');
 });

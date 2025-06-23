@@ -1,6 +1,6 @@
 {
   "name": "@fivexlabs/fivui",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A modern, lightweight UI component library CLI for React and Next.js applications, built with TailwindCSS",
   "type": "module",
   "engines": {
@@ -48,13 +48,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fivexlabs/fivui.git"
+    "url": "git+https://github.com/Fivex-Labs/fivui-lib"
   },
   "bugs": {
-    "url": "https://github.com/fivexlabs/fivui/issues"
+    "url": "https://github.com/Fivex-Labs/fivui-lib/issues"
   },
-  "homepage": "https://github.com/fivexlabs/fivui#readme",
-  "author": "Fivex Labs",
+  "homepage": "https://ui.fivexlabs.com",
+  "author": "Fivex Labs (https://fivexlabs.com)",
   "license": "MIT",
   "peerDependencies": {
     "react": ">=18.0.0",

@@ -10,13 +10,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 // @ts-ignore - Template file, path will resolve in user project
 import { cn } from "@/lib/utils"
 // @ts-ignore - Template file, path will resolve in user project
-import { oklchToHex, hexToOklch, rgbToOklch, isValidColor, toOklch } from "@/lib/color-utils"
+import { oklchToHex, hexToOklch, rgbToOklch, isValidColor, toOklch } from "@/components/ui/color-utils"
 
 export interface ColorPickerProps {
-  label: string
   value: string
   onChange: (value: string) => void
-  description?: string
   className?: string
   /**
    * Which color format tabs to show
@@ -38,6 +36,16 @@ export interface ColorPickerProps {
    * @default true
    */
   showPreview?: boolean
+  /**
+   * Size of the color picker button
+   * @default 'default'
+   */
+  size?: 'sm' | 'default' | 'lg'
+  /**
+   * Whether the button is disabled
+   * @default false
+   */
+  disabled?: boolean
 }
 
 // Parse OKLCH string to components
@@ -59,18 +67,18 @@ function createOklch(l: number, c: number, h: number): string {
 }
 
 const ColorPicker = React.forwardRef<
-  HTMLDivElement,
+  HTMLButtonElement,
   ColorPickerProps
 >(({ 
-  label, 
   value, 
   onChange, 
-  description, 
   className,
   formats = ['oklch', 'hex', 'rgb'],
   defaultFormat = 'oklch',
   showSliders = true,
-  showPreview = true
+  showPreview = true,
+  size = 'default',
+  disabled = false
 }, ref) => {
   const [isOpen, setIsOpen] = React.useState(false)
   const [inputValue, setInputValue] = React.useState(value)
@@ -179,178 +187,182 @@ const ColorPicker = React.forwardRef<
     rgb: 'rgb(0, 0, 0)'
   }
 
+  // Size classes for the button
+  const sizeClasses = {
+    sm: 'h-8 w-8',
+    default: 'h-10 w-10',
+    lg: 'h-12 w-12'
+  }
+
   return (
-    <div ref={ref} className={cn("space-y-2", className)}>
-      <div className="flex items-center justify-between">
-        <Label className="text-sm font-medium">{label}</Label>
-        <Popover open={isOpen} onOpenChange={setIsOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-12 h-8 p-0 rounded-md border-2"
-              style={{ backgroundColor: oklchToHex(value) }}
-            >
-              <span className="sr-only">Pick color</span>
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-96">
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          ref={ref}
+          variant="outline"
+          className={cn(
+            "p-0 rounded-md border-2",
+            sizeClasses[size],
+            className
+          )}
+          style={{ backgroundColor: oklchToHex(value) }}
+          disabled={disabled}
+        >
+          <span className="sr-only">Pick color</span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-96">
+        <div className="space-y-4">
+          {/* OKLCH Sliders */}
+          {showSliders && (
             <div className="space-y-4">
-              {/* OKLCH Sliders */}
-              {showSliders && (
-                <div className="space-y-4">
-                  <Label className="text-sm font-medium">OKLCH Color Picker</Label>
-                  
-                  {/* Lightness Slider */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <Label className="text-xs text-muted-foreground">Lightness (L)</Label>
-                      <span className="text-xs text-muted-foreground">{lightness.toFixed(3)}</span>
-                    </div>
-                    <Slider
-                      value={[lightness]}
-                      onValueChange={([newL]) => {
-                        setLightness(newL)
-                        updateOklchFromSliders(newL, chroma, hue)
-                      }}
-                      min={0}
-                      max={1}
-                      step={0.001}
-                      className="w-full"
-                    />
-                    <div 
-                      className="h-4 rounded-sm border"
-                      style={{
-                        background: `linear-gradient(to right, 
-                          oklch(0 ${chroma} ${hue}), 
-                          oklch(0.5 ${chroma} ${hue}), 
-                          oklch(1 ${chroma} ${hue}))`
-                      }}
-                    />
-                  </div>
-
-                  {/* Chroma Slider */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <Label className="text-xs text-muted-foreground">Chroma (C)</Label>
-                      <span className="text-xs text-muted-foreground">{chroma.toFixed(3)}</span>
-                    </div>
-                    <Slider
-                      value={[chroma]}
-                      onValueChange={([newC]) => {
-                        setChroma(newC)
-                        updateOklchFromSliders(lightness, newC, hue)
-                      }}
-                      min={0}
-                      max={0.4}
-                      step={0.001}
-                      className="w-full"
-                    />
-                    <div 
-                      className="h-4 rounded-sm border"
-                      style={{
-                        background: `linear-gradient(to right, 
-                          oklch(${lightness} 0 ${hue}), 
-                          oklch(${lightness} 0.2 ${hue}), 
-                          oklch(${lightness} 0.4 ${hue}))`
-                      }}
-                    />
-                  </div>
-
-                  {/* Hue Slider */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <Label className="text-xs text-muted-foreground">Hue (H)</Label>
-                      <span className="text-xs text-muted-foreground">{hue.toFixed(1)}°</span>
-                    </div>
-                    <Slider
-                      value={[hue]}
-                      onValueChange={([newH]) => {
-                        setHue(newH)
-                        updateOklchFromSliders(lightness, chroma, newH)
-                      }}
-                      min={0}
-                      max={360}
-                      step={1}
-                      className="w-full"
-                    />
-                    <div 
-                      className="h-4 rounded-sm border"
-                      style={{
-                        background: `linear-gradient(to right, 
-                          oklch(${lightness} ${chroma} 0), 
-                          oklch(${lightness} ${chroma} 60), 
-                          oklch(${lightness} ${chroma} 120), 
-                          oklch(${lightness} ${chroma} 180), 
-                          oklch(${lightness} ${chroma} 240), 
-                          oklch(${lightness} ${chroma} 300), 
-                          oklch(${lightness} ${chroma} 360))`
-                      }}
-                    />
-                  </div>
+              <Label className="text-sm font-medium">OKLCH Color Picker</Label>
+              
+              {/* Lightness Slider */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label className="text-xs text-muted-foreground">Lightness (L)</Label>
+                  <span className="text-xs text-muted-foreground">{lightness.toFixed(3)}</span>
                 </div>
-              )}
+                <Slider
+                  value={[lightness]}
+                  onValueChange={([newL]) => {
+                    setLightness(newL)
+                    updateOklchFromSliders(newL, chroma, hue)
+                  }}
+                  min={0}
+                  max={1}
+                  step={0.001}
+                  className="w-full"
+                />
+                <div 
+                  className="h-4 rounded-sm border"
+                  style={{
+                    background: `linear-gradient(to right, 
+                      oklch(0 ${chroma} ${hue}), 
+                      oklch(0.5 ${chroma} ${hue}), 
+                      oklch(1 ${chroma} ${hue}))`
+                  }}
+                />
+              </div>
 
-              {/* Format Tabs and Input */}
-              {availableFormats.length > 1 ? (
-                <div>
-                  <Label className="text-sm font-medium">Color Input</Label>
-                  <Tabs value={inputType} onValueChange={(v) => handleTypeChange(v as 'hex' | 'rgb' | 'oklch')}>
-                    <TabsList className={cn(
-                      "grid w-full",
-                      availableFormats.length === 2 && "grid-cols-2",
-                      availableFormats.length === 3 && "grid-cols-3"
-                    )}>
-                      {availableFormats.map((format) => (
-                        <TabsTrigger key={format} value={format}>
-                          {formatLabels[format]}
-                        </TabsTrigger>
-                      ))}
-                    </TabsList>
-                    {availableFormats.map((format) => (
-                      <TabsContent key={format} value={format}>
-                        <Input
-                          value={inputValue}
-                          onChange={(e) => handleInputChange(e.target.value)}
-                          placeholder={formatPlaceholders[format]}
-                        />
-                      </TabsContent>
-                    ))}
-                  </Tabs>
+              {/* Chroma Slider */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label className="text-xs text-muted-foreground">Chroma (C)</Label>
+                  <span className="text-xs text-muted-foreground">{chroma.toFixed(3)}</span>
                 </div>
-              ) : (
-                <div>
-                  <Label className="text-sm font-medium">Color Input</Label>
-                  <Input
-                    value={inputValue}
-                    onChange={(e) => handleInputChange(e.target.value)}
-                    placeholder={formatPlaceholders[availableFormats[0]]}
-                  />
+                <Slider
+                  value={[chroma]}
+                  onValueChange={([newC]) => {
+                    setChroma(newC)
+                    updateOklchFromSliders(lightness, newC, hue)
+                  }}
+                  min={0}
+                  max={0.4}
+                  step={0.001}
+                  className="w-full"
+                />
+                <div 
+                  className="h-4 rounded-sm border"
+                  style={{
+                    background: `linear-gradient(to right, 
+                      oklch(${lightness} 0 ${hue}), 
+                      oklch(${lightness} 0.2 ${hue}), 
+                      oklch(${lightness} 0.4 ${hue}))`
+                  }}
+                />
+              </div>
+
+              {/* Hue Slider */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label className="text-xs text-muted-foreground">Hue (H)</Label>
+                  <span className="text-xs text-muted-foreground">{hue.toFixed(1)}°</span>
                 </div>
-              )}
-
-              {/* Color Preview */}
-              {showPreview && (
-                <div className="h-16 rounded-md border-2" style={{ backgroundColor: oklchToHex(tempValue) }} />
-              )}
-
-              {/* Confirmation Buttons */}
-              <div className="flex gap-2">
-                <Button onClick={handleConfirm} className="flex-1">
-                  Apply
-                </Button>
-                <Button onClick={handleCancel} variant="outline" className="flex-1">
-                  Cancel
-                </Button>
+                <Slider
+                  value={[hue]}
+                  onValueChange={([newH]) => {
+                    setHue(newH)
+                    updateOklchFromSliders(lightness, chroma, newH)
+                  }}
+                  min={0}
+                  max={360}
+                  step={1}
+                  className="w-full"
+                />
+                <div 
+                  className="h-4 rounded-sm border"
+                  style={{
+                    background: `linear-gradient(to right, 
+                      oklch(${lightness} ${chroma} 0), 
+                      oklch(${lightness} ${chroma} 60), 
+                      oklch(${lightness} ${chroma} 120), 
+                      oklch(${lightness} ${chroma} 180), 
+                      oklch(${lightness} ${chroma} 240), 
+                      oklch(${lightness} ${chroma} 300), 
+                      oklch(${lightness} ${chroma} 360))`
+                  }}
+                />
               </div>
             </div>
-          </PopoverContent>
-        </Popover>
-      </div>
-      {description && (
-        <p className="text-xs text-muted-foreground">{description}</p>
-      )}
-    </div>
+          )}
+
+          {/* Format Tabs and Input */}
+          {availableFormats.length > 1 ? (
+            <div>
+              <Label className="text-sm font-medium">Color Input</Label>
+              <Tabs value={inputType} onValueChange={(v) => handleTypeChange(v as 'hex' | 'rgb' | 'oklch')}>
+                <TabsList className={cn(
+                  "grid w-full",
+                  availableFormats.length === 2 && "grid-cols-2",
+                  availableFormats.length === 3 && "grid-cols-3"
+                )}>
+                  {availableFormats.map((format) => (
+                    <TabsTrigger key={format} value={format}>
+                      {formatLabels[format]}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+                {availableFormats.map((format) => (
+                  <TabsContent key={format} value={format}>
+                    <Input
+                      value={inputValue}
+                      onChange={(e) => handleInputChange(e.target.value)}
+                      placeholder={formatPlaceholders[format]}
+                    />
+                  </TabsContent>
+                ))}
+              </Tabs>
+            </div>
+          ) : (
+            <div>
+              <Label className="text-sm font-medium">Color Input</Label>
+              <Input
+                value={inputValue}
+                onChange={(e) => handleInputChange(e.target.value)}
+                placeholder={formatPlaceholders[availableFormats[0]]}
+              />
+            </div>
+          )}
+
+          {/* Color Preview */}
+          {showPreview && (
+            <div className="h-16 rounded-md border-2" style={{ backgroundColor: oklchToHex(tempValue) }} />
+          )}
+
+          {/* Confirmation Buttons */}
+          <div className="flex gap-2">
+            <Button onClick={handleConfirm} className="flex-1">
+              Apply
+            </Button>
+            <Button onClick={handleCancel} variant="outline" className="flex-1">
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 })
 ColorPicker.displayName = "ColorPicker"

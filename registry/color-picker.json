@@ -1,0 +1,29 @@
+{
+  "name": "color-picker",
+  "type": "components:ui",
+  "dependencies": [
+    "culori"
+  ],
+  "devDependencies": [
+    "@types/culori"
+  ],
+  "registryDependencies": [
+    "button",
+    "input",
+    "label",
+    "popover",
+    "slider",
+    "tabs"
+  ],
+  "files": [
+    {
+      "name": "color-picker.tsx",
+      "template": "templates/color-picker.tsx"
+    },
+    {
+      "name": "color-utils.ts",
+      "template": "src/lib/color-utils.ts",
+      "type": "components:lib"
+    }
+  ]
+} 

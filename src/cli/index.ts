@@ -339,7 +339,7 @@ function addAllComponents() {
 program
   .name('fivui')
   .description('FivUI - Modern UI Component Library CLI')
-  .version('1.0.3');
+  .version('1.0.4');
 
 program
   .command('init')
@@ -429,7 +429,7 @@ program.action(() => {
   const isMonorepo = workspace.type !== 'single';
   
   console.log('\n🎨 FivUI - Modern UI Component Library');
-  console.log('Version: 1.0.3\n');
+  console.log('Version: 1.0.4\n');
   
   if (isMonorepo) {
     console.log(`🏢 Detected ${workspace.type} monorepo`);

@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 // @ts-ignore - Template file, path will resolve in user project
 import { cn } from "@/lib/utils"
 // @ts-ignore - Template file, path will resolve in user project
-import { oklchToHex, hexToOklch, rgbToOklch, isValidColor, toOklch } from "@/lib/color-utils"
+import { oklchToHex, hexToOklch, rgbToOklch, isValidColor, toOklch } from "@/components/ui/color-utils"
 
 export interface ColorPickerProps {
   label: string

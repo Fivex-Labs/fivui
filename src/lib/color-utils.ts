@@ -1,3 +1,4 @@
+// @ts-ignore - This dependency will be installed when the component is added
 import { formatHex, oklch, rgb, parse } from 'culori'
 
 // Convert any color to OKLCH format
@@ -57,8 +58,8 @@ export function oklchToHex(oklchString: string): string {
     const oklchColor = { mode: 'oklch' as const, l, c, h }
     
     // Convert to HEX
-    const hexColor = formatHex(oklchColor)
-    return hexColor || '#000000'
+    const hexColor = oklchColor ? formatHex(oklchColor) : null
+    return hexColor ?? '#000000'
   } catch (error) {
     console.warn('Failed to convert OKLCH to HEX:', oklchString, error)
     return '#000000' // fallback
@@ -86,7 +87,8 @@ export function isValidColor(color: string): boolean {
       return values.length >= 3 && values.every(v => !isNaN(v))
     }
     
-    return Boolean(parse(color))
+    const parsed = parse(color)
+    return Boolean(parsed)
   } catch {
     return false
   }
@@ -99,7 +101,7 @@ export function getContrastColor(backgroundColor: string): string {
     if (!oklchColor) return 'oklch(0 0 0)'
     
     // If lightness is high, return dark text, otherwise light text
-    return oklchColor.l && oklchColor.l > 0.5 ? 'oklch(0 0 0)' : 'oklch(1 0 0)'
+    return oklchColor.l != null && oklchColor.l > 0.5 ? 'oklch(0 0 0)' : 'oklch(1 0 0)'
   } catch {
     return 'oklch(0 0 0)'
   }

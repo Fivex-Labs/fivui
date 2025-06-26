@@ -1,19 +1,17 @@
 {
+  "$schema": "https://ui.fivexlabs.com/fivui.schema.json",
   "name": "masked-input",
   "type": "components:ui",
-  "dependencies": [
-    "react-input-mask"
-  ],
-  "devDependencies": [
-    "@types/react-input-mask"
-  ],
-  "registryDependencies": [
-    "utils"
-  ],
   "files": [
     {
       "name": "masked-input.tsx",
       "template": "templates/masked-input.tsx"
     }
+  ],
+  "dependencies": [
+    "react-imask"
+  ],
+  "registryDependencies": [
+    "utils"
   ]
 } 

@@ -39,7 +39,6 @@
     "node_modules",
     "dist",
     "templates",
-    "src/lib/color-utils.ts",
     "*.config.ts",
     "**/*.test.ts",
     "**/*.test.tsx",

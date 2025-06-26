@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Slider } from "@/components/ui/slider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
-import { convertOklchToHex, convertHexToOklch, convertRgbToOklch, convertOklchToRgb } from "@/lib/color-utils"
+import { oklchToHex, hexToOklch, rgbToOklch, isValidColor, toOklch } from "@/components/ui/color-utils"
 
 export interface ColorPickerProps {
   value: string
@@ -85,7 +85,7 @@ const ColorPicker = React.forwardRef<
   const availableFormats = formats.length > 0 ? formats : ['oklch']
   const initialFormat = availableFormats.includes(defaultFormat) ? defaultFormat : availableFormats[0]
   
-  const [inputType, setInputType] = React.useState<'hex' | 'rgb' | 'oklch'>(initialFormat)
+  const [inputType, setInputType] = React.useState<'hex' | 'rgb' | 'oklch'>(initialFormat as 'hex' | 'rgb' | 'oklch')
   const [tempValue, setTempValue] = React.useState(value)
   
   // Parse OKLCH components for sliders
@@ -94,12 +94,26 @@ const ColorPicker = React.forwardRef<
   const [chroma, setChroma] = React.useState(c)
   const [hue, setHue] = React.useState(h)
 
-  // Update OKLCH when sliders change
-  const updateOklchFromSliders = React.useCallback((newL: number, newC: number, newH: number) => {
-    const newOklch = createOklch(newL, newC, newH)
-    setTempValue(newOklch)
-    handleTypeChange(inputType, newOklch)
-  }, [inputType])
+  // Format labels for display
+  const formatLabels: Record<'hex' | 'rgb' | 'oklch', string> = {
+    oklch: 'OKLCH',
+    hex: 'HEX',
+    rgb: 'RGB'
+  }
+
+  // Format placeholders
+  const formatPlaceholders: Record<'hex' | 'rgb' | 'oklch', string> = {
+    oklch: 'oklch(0.5 0.1 180)',
+    hex: '#000000',
+    rgb: 'rgb(0, 0, 0)'
+  }
+
+  // Size classes for the button
+  const sizeClasses = {
+    sm: 'h-8 w-8',
+    default: 'h-10 w-10',
+    lg: 'h-12 w-12'
+  } as const
 
   // Update input value when type changes
   const handleTypeChange = React.useCallback((newType: 'hex' | 'rgb' | 'oklch', oklchValue?: string) => {
@@ -123,6 +137,13 @@ const ColorPicker = React.forwardRef<
       setInputValue(valueToConvert)
     }
   }, [tempValue])
+
+  // Update OKLCH when sliders change
+  const updateOklchFromSliders = React.useCallback((newL: number, newC: number, newH: number) => {
+    const newOklch = createOklch(newL, newC, newH)
+    setTempValue(newOklch)
+    handleTypeChange(inputType, newOklch)
+  }, [inputType, handleTypeChange])
 
   const handleInputChange = React.useCallback((newValue: string) => {
     setInputValue(newValue)
@@ -171,27 +192,6 @@ const ColorPicker = React.forwardRef<
     setHue(components.h)
   }, [tempValue])
 
-  // Format labels for display
-  const formatLabels = {
-    oklch: 'OKLCH',
-    hex: 'HEX',
-    rgb: 'RGB'
-  }
-
-  // Format placeholders
-  const formatPlaceholders = {
-    oklch: 'oklch(0.5 0.1 180)',
-    hex: '#000000',
-    rgb: 'rgb(0, 0, 0)'
-  }
-
-  // Size classes for the button
-  const sizeClasses = {
-    sm: 'h-8 w-8',
-    default: 'h-10 w-10',
-    lg: 'h-12 w-12'
-  }
-
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
@@ -200,7 +200,7 @@ const ColorPicker = React.forwardRef<
           variant="outline"
           className={cn(
             "p-0 rounded-md border-2",
-            sizeClasses[size],
+            sizeClasses[size as keyof typeof sizeClasses],
             className
           )}
           style={{ backgroundColor: oklchToHex(value) }}
@@ -310,25 +310,24 @@ const ColorPicker = React.forwardRef<
           {availableFormats.length > 1 ? (
             <div>
               <Label className="text-sm font-medium">Color Input</Label>
-              <Tabs value={inputType} onValueChange={(v) => handleTypeChange(v as 'hex' | 'rgb' | 'oklch')}>
-                <TabsList className={cn(
-                  "grid w-full",
-                  availableFormats.length === 2 && "grid-cols-2",
-                  availableFormats.length === 3 && "grid-cols-3"
-                )}>
-                  {availableFormats.map((format) => (
+              <Tabs defaultValue={inputType} onValueChange={(value) => handleTypeChange(value as 'hex' | 'rgb' | 'oklch')}>
+                <TabsList className="grid w-full grid-cols-3">
+                  {(formats as Array<keyof typeof formatLabels>).map((format) => (
                     <TabsTrigger key={format} value={format}>
                       {formatLabels[format]}
                     </TabsTrigger>
                   ))}
                 </TabsList>
-                {availableFormats.map((format) => (
+                {(formats as Array<keyof typeof formatPlaceholders>).map((format) => (
                   <TabsContent key={format} value={format}>
-                    <Input
-                      value={inputValue}
-                      onChange={(e) => handleInputChange(e.target.value)}
-                      placeholder={formatPlaceholders[format]}
-                    />
+                    <div className="space-y-2">
+                      <Label>{formatPlaceholders[format]}</Label>
+                      <Input
+                        value={inputValue}
+                        onChange={(e) => handleInputChange(e.target.value)}
+                        placeholder={formatPlaceholders[format]}
+                      />
+                    </div>
                   </TabsContent>
                 ))}
               </Tabs>
@@ -339,7 +338,7 @@ const ColorPicker = React.forwardRef<
               <Input
                 value={inputValue}
                 onChange={(e) => handleInputChange(e.target.value)}
-                placeholder={formatPlaceholders[availableFormats[0]]}
+                placeholder={formatPlaceholders[availableFormats[0] as keyof typeof formatPlaceholders]}
               />
             </div>
           )}
@@ -350,12 +349,12 @@ const ColorPicker = React.forwardRef<
           )}
 
           {/* Confirmation Buttons */}
-          <div className="flex gap-2">
-            <Button onClick={handleConfirm} className="flex-1">
-              Apply
-            </Button>
-            <Button onClick={handleCancel} variant="outline" className="flex-1">
+          <div className="flex justify-between">
+            <Button variant="outline" onClick={handleCancel}>
               Cancel
+            </Button>
+            <Button onClick={handleConfirm}>
+              Update
             </Button>
           </div>
         </div>

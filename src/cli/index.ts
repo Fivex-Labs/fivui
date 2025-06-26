@@ -290,22 +290,20 @@ function getAllAvailableComponents(): string[] {
 }
 
 function addAllComponents() {
-  const allComponents = getAllAvailableComponents();
+  const components = getAllAvailableComponents();
   
-  if (allComponents.length === 0) {
-    console.log('\n❌ No components found in registry.');
+  if (components.length === 0) {
+    console.log('❌ No components available.');
     return;
   }
   
-  console.log(`\n🚀 Installing all ${allComponents.length} FivUI components...\n`);
-  console.log(`📦 Components to install: ${allComponents.join(', ')}\n`);
+  console.log(`\n🚀 Adding all ${components.length} available components...\n`);
   
   const processedComponents = new Set<string>();
   let successCount = 0;
   let failureCount = 0;
-  const failedComponents: string[] = [];
   
-  for (const component of allComponents) {
+  for (const component of components) {
     if (processedComponents.has(component)) {
       console.log(`⏭️  Skipping ${component} (already processed)`);
       continue;
@@ -318,28 +316,22 @@ function addAllComponents() {
       successCount++;
     } catch (error) {
       console.log(`❌ Failed to add ${component}`);
-      failedComponents.push(component);
       failureCount++;
     }
   }
   
-  console.log(`\n📊 Installation Summary:`);
-  console.log(`✅ Successfully installed: ${successCount} component${successCount !== 1 ? 's' : ''}`);
+  console.log(`\n📊 Summary:`);
+  console.log(`✅ Successfully added: ${successCount} component${successCount !== 1 ? 's' : ''}`);
   if (failureCount > 0) {
-    console.log(`❌ Failed to install: ${failureCount} component${failureCount !== 1 ? 's' : ''}`);
-    console.log(`   Failed components: ${failedComponents.join(', ')}`);
-  }
-  
-  if (successCount === allComponents.length) {
-    console.log('\n🎉 All FivUI components have been successfully installed!');
-    console.log('You now have access to the complete FivUI component library.');
+    console.log(`❌ Failed to add: ${failureCount} component${failureCount !== 1 ? 's' : ''}`);
   }
 }
 
+// CLI Setup
 program
   .name('fivui')
   .description('FivUI - Modern UI Component Library CLI')
-  .version('1.0.7');
+  .version('1.0.8');
 
 program
   .command('init')
@@ -369,8 +361,10 @@ program
 
 program
   .command('setup')
-  .description('Show setup instructions for TailwindCSS v4.x')
-  .action(showSetupInstructions);
+  .description('Show setup instructions for TailwindCSS')
+  .action(() => {
+    showSetupInstructions();
+  });
 
 program
   .command('add')
@@ -417,32 +411,32 @@ program
   });
 
 program
-  .command('add-all')
-  .description('Add all available components to your project')
+  .command('list')
+  .description('List all available components')
+  .action(() => {
+    const components = getAllAvailableComponents();
+    
+    if (components.length === 0) {
+      console.log('❌ No components available.');
+      return;
+    }
+    
+    console.log('\n📋 Available Components:');
+    console.log('========================');
+    
+    components.forEach((component, index) => {
+      console.log(`${index + 1}. ${component}`);
+    });
+    
+    console.log(`\n💡 Use 'fivui add <component>' to add a component.`);
+    console.log('💡 Use "fivui add all" to add all components at once.');
+  });
+
+program
+  .command('all')
+  .description('Add all available components')
   .action(() => {
     addAllComponents();
   });
-
-// Default action
-program.action(() => {
-  const workspace = detectWorkspace();
-  const isMonorepo = workspace.type !== 'single';
-  
-  console.log('\n🎨 FivUI - Modern UI Component Library');
-  console.log('Version: 1.0.7\n');
-  
-  if (isMonorepo) {
-    console.log(`🏢 Detected ${workspace.type} monorepo`);
-    console.log(`📂 Root: ${workspace.root}\n`);
-  }
-  
-  console.log('Available commands:');
-  console.log('  fivui init     Initialize FivUI in your project');
-  console.log('  fivui setup    Show setup instructions');
-  console.log('  fivui add      Add components to your project');
-  console.log('  fivui add-all  Add all available components');
-  console.log('  fivui --help   Show all commands');
-  console.log('\nRequires TailwindCSS v4.x or higher');
-});
 
 program.parse(); 

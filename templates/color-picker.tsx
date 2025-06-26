@@ -7,10 +7,8 @@ import { Label } from "@/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Slider } from "@/components/ui/slider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-// @ts-ignore - Template file, path will resolve in user project
 import { cn } from "@/lib/utils"
-// @ts-ignore - Template file, path will resolve in user project
-import { oklchToHex, hexToOklch, rgbToOklch, isValidColor, toOklch } from "@/components/ui/color-utils"
+import { convertOklchToHex, convertHexToOklch, convertRgbToOklch, convertOklchToRgb } from "@/lib/color-utils"
 
 export interface ColorPickerProps {
   value: string

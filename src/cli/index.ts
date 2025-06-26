@@ -331,7 +331,7 @@ function addAllComponents() {
 program
   .name('fivui')
   .description('FivUI - Modern UI Component Library CLI')
-  .version('1.0.9');
+  .version('1.1.0');
 
 program
   .command('init')

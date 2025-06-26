@@ -1,32 +1,16 @@
-// @ts-ignore - This dependency will be installed when the component is added
-import { formatHex, oklch, rgb, parse } from 'culori'
+import { formatHex, oklch, parse } from 'culori'
 
 // Convert any color to OKLCH format
 export function toOklch(color: string): string {
   try {
     // Parse the color first
-    let parsed
-    
     if (color.startsWith('oklch(')) {
       // Already in OKLCH format, return as-is
       return color
-    } else if (color.startsWith('#')) {
-      // Hex format
-      parsed = parse(color)
-    } else if (color.startsWith('rgb(')) {
-      // RGB format
-      parsed = rgb(color)
-    } else {
-      // Try to parse as any supported format
-      parsed = oklch(color)
     }
     
-    if (!parsed) {
-      throw new Error('Invalid color format')
-    }
-    
-    // Convert to OKLCH
-    const oklchColor = oklch(parsed)
+    // Try to parse and convert to OKLCH
+    const oklchColor = oklch(color)
     if (!oklchColor) {
       throw new Error('Failed to convert to OKLCH')
     }

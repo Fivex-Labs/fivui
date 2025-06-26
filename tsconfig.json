@@ -28,7 +28,13 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "verbatimModuleSyntax": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": ["src/components/*"],
+      "@/lib/*": ["src/lib/*"],
+      "@/utils": ["src/lib/utils"],
+      "@/hooks/*": ["src/hooks/*"]
+    }
   },
   "include": [
     "src/**/*",

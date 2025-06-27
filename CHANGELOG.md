@@ -19,7 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-## [v1.2.0] - 2025-01-17
+## [v1.2.2] - 2025-01-17
+
+### Fixed
+- 🐛 **Dual Range Slider**: Fixed width issue where slider wasn't taking full width
+- 🔧 **Component API**: Simplified Dual Range Slider API by removing redundant label props
+
+## [v1.2.1] - 2025-01-17
 
 ### Added
 - ✨ **Dual Range Slider Component**: New component for selecting a range of values

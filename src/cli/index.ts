@@ -8,9 +8,10 @@ import { initProject } from './commands/init.js';
 
 const program = new Command();
 
-// Read version from package.json
-const packageJson = JSON.parse(readFileSync(resolve(__dirname, '../../package.json'), 'utf8'));
-program.version(packageJson.version, '-v, --version', 'Output the current version');
+program
+  .name('fivui')
+  .description('FivUI CLI - A modern UI component library for React')
+  .version('1.2.1');
 
 function detectTailwindVersion(): '3' | '4' | null {
   try {
@@ -331,11 +332,6 @@ function addAllComponents() {
 }
 
 // CLI Setup
-program
-  .name('fivui')
-  .description('FivUI - Modern UI Component Library CLI')
-  .version('1.1.1');
-
 program
   .command('init')
   .description('Initialize FivUI in your project')

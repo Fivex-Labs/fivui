@@ -1,6 +1,6 @@
 {
   "name": "step-forms",
-  "type": "registry:ui",
+  "type": "components:ui",
   "dependencies": [
     "lucide-react"
   ],
@@ -11,8 +11,8 @@
   ],
   "files": [
     {
-      "path": "ui/step-forms.tsx",
-      "type": "registry:ui"
+      "name": "step-forms.tsx",
+      "template": "templates/step-forms.tsx"
     }
   ]
 } 

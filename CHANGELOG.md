@@ -19,6 +19,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [v1.2.0] - 2025-01-17
+
+### Added
+- ✨ **Dual Range Slider Component**: New component for selecting a range of values
+  - Custom labels with formatting support
+  - Configurable label positioning (top/bottom)
+  - Built on Radix UI's slider primitive for accessibility
+  - Consistent styling with FivUI design system
+
+- 🔍 **Multiple Selector Component**: Advanced multi-select component with rich features
+  - Async and sync search support with debouncing
+  - Option grouping capability
+  - Creatable options support
+  - Fixed and disabled options
+  - Maximum selection limit
+  - Custom styling for component and badges
+  - Loading states for async operations
+  - Full keyboard navigation
+  - Clear all functionality
+  - Placeholder control
+
+### Enhanced
+- 🎨 **Component Registry**: Added registry entries for new components
+- 📦 **Dependencies**: Added necessary Radix UI primitives and other dependencies
+- 🔧 **TypeScript Support**: Full type definitions for all new components
+
 ## [v0.5.3] - 2025-01-17
 
 ### Documentation

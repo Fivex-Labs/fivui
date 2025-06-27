@@ -6,8 +6,11 @@ import { execSync } from 'child_process';
 import { detectWorkspace, loadComponentsConfig, findComponentsConfig, resolveComponentPath } from '../lib/workspace.js';
 import { initProject } from './commands/init.js';
 
-
 const program = new Command();
+
+// Read version from package.json
+const packageJson = JSON.parse(readFileSync(resolve(__dirname, '../../package.json'), 'utf8'));
+program.version(packageJson.version, '-v, --version', 'Output the current version');
 
 function detectTailwindVersion(): '3' | '4' | null {
   try {

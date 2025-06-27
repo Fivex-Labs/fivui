@@ -1,0 +1,19 @@
+{
+  "name": "multiple-selector",
+  "type": "components:ui",
+  "dependencies": [
+    "@radix-ui/react-badge",
+    "cmdk",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "badge",
+    "command"
+  ],
+  "files": [
+    {
+      "name": "multiple-selector.tsx",
+      "template": "templates/multiple-selector.tsx"
+    }
+  ]
+} 

@@ -1,0 +1,14 @@
+{
+  "name": "dual-range-slider",
+  "type": "components:ui",
+  "dependencies": [
+    "@radix-ui/react-slider"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "dual-range-slider.tsx",
+      "template": "templates/dual-range-slider.tsx"
+    }
+  ]
+} 

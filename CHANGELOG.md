@@ -19,6 +19,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [v1.2.4] - 2025-01-17
+
+### Added
+- ✨ **Step Forms Component**: Comprehensive multi-step form component with advanced features
+  - Multiple display variants: default (numbered circles), dots, and progress bar
+  - Step validation system with optional/required step support
+  - Interactive navigation with clickable step indicators
+  - Smooth animations and transitions between steps
+  - Both controlled and uncontrolled component patterns
+  - Rich step information display (titles, descriptions, status indicators)
+  - Customizable button text and navigation controls
+  - Responsive design with horizontal/vertical orientation support
+  - Built-in accessibility features and keyboard navigation
+  - TypeScript interfaces for step configuration and validation
+
+### Enhanced
+- 🎨 **Component Registry**: Added registry entry for step-forms component
+- 📦 **Dependencies**: Includes lucide-react icons and card/button components
+- 🔧 **Template System**: Full template integration for seamless installation
+
 ## [v1.2.3] - 2025-01-17
 
 ### Fixed

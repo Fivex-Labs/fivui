@@ -2,13 +2,11 @@
   "name": "multiple-selector",
   "type": "components:ui",
   "dependencies": [
-    "@radix-ui/react-badge",
-    "cmdk",
     "lucide-react"
   ],
   "registryDependencies": [
     "badge",
-    "command"
+    "input"
   ],
   "files": [
     {

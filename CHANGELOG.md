@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [v1.2.3] - 2025-01-17
+
+### Fixed
+- 🔧 **Multiple Selector Registry**: Updated registry dependencies to match template
+  - Removed unused `cmdk` and `command` dependencies
+  - Added missing `input` dependency
+  - Kept `lucide-react` for icons and `badge` for selected options
+
 ## [v1.2.2] - 2025-01-17
 
 ### Fixed

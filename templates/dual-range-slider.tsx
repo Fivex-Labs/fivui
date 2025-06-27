@@ -36,7 +36,7 @@ const DualRangeSlider = React.forwardRef<
   return (
     <div className="relative w-full">
       {showLabel && (
-        <div className="absolute -top-6 left-0 right-0 flex justify-between">
+        <div className="absolute -top-8 left-0 right-0 flex justify-between">
           <span className="text-sm">{renderLabel(values[0])}</span>
           <span className="text-sm">{renderLabel(values[1])}</span>
         </div>

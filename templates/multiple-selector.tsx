@@ -1,18 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { X, Check, Loader2, ChevronsUpDown } from "lucide-react"
-import { Command as CommandPrimitive } from "cmdk"
+import { X, ChevronDown, Loader2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "@/components/ui/command"
+import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 
 export interface Option {
@@ -20,323 +11,345 @@ export interface Option {
   label: string
   fixed?: boolean
   disabled?: boolean
-  [key: string]: any
+  group?: string
 }
 
 export interface MultipleSelectorProps {
   value?: Option[]
-  defaultOptions?: Option[]
+  defaultValue?: Option[]
   options?: Option[]
   placeholder?: string
-  hidePlaceholderWhenSelected?: boolean
   disabled?: boolean
   onChange?: (options: Option[]) => void
-  delay?: number
   onSearch?: (value: string) => Promise<Option[]>
-  onSearchSync?: (value: string) => Option[]
-  triggerSearchOnFocus?: boolean
   creatable?: boolean
-  groupBy?: string
   maxSelected?: number
   onMaxSelected?: (maxLimit: number) => void
-  loadingIndicator?: React.ReactNode
-  emptyIndicator?: React.ReactNode
-  selectFirstItem?: boolean
   className?: string
   badgeClassName?: string
-  hideClearAllButton?: boolean
+  // Loading and message props
+  loadingIndicator?: React.ReactNode
+  emptyIndicator?: React.ReactNode
+  searchDelay?: number
+  hidePlaceholderWhenSelected?: boolean
 }
 
-export interface MultipleSelectorRef {
-  selectedValue: Option[]
-  input: HTMLInputElement | null
-}
-
-function useDebounce<T>(value: T, delay?: number): T {
+// Custom hook for debounced search
+function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = React.useState<T>(value)
 
   React.useEffect(() => {
-    const timer = setTimeout(() => setDebouncedValue(value), delay || 500)
-    return () => clearTimeout(timer)
+    const handler = setTimeout(() => {
+      setDebouncedValue(value)
+    }, delay)
+
+    return () => {
+      clearTimeout(handler)
+    }
   }, [value, delay])
 
   return debouncedValue
 }
 
-const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorProps>(
+export const MultipleSelector = React.forwardRef<HTMLDivElement, MultipleSelectorProps>(
   (
     {
       value,
-      defaultOptions = [],
-      options: controlledOptions,
+      defaultValue = [],
+      options = [],
       placeholder = "Select options...",
-      hidePlaceholderWhenSelected,
       disabled,
       onChange,
-      delay = 500,
       onSearch,
-      onSearchSync,
-      triggerSearchOnFocus,
       creatable = false,
-      groupBy,
       maxSelected = Number.MAX_SAFE_INTEGER,
       onMaxSelected,
-      loadingIndicator,
-      emptyIndicator,
-      selectFirstItem = true,
       className,
       badgeClassName,
-      hideClearAllButton = false,
+      loadingIndicator,
+      emptyIndicator,
+      searchDelay = 300,
+      hidePlaceholderWhenSelected = false,
     },
     ref
   ) => {
-    const inputRef = React.useRef<HTMLInputElement>(null)
-    const [open, setOpen] = React.useState(false)
+    const [searchValue, setSearchValue] = React.useState("")
+    const [isOpen, setIsOpen] = React.useState(false)
     const [isLoading, setIsLoading] = React.useState(false)
-    const [selected, setSelected] = React.useState<Option[]>(value || [])
-    const [options, setOptions] = React.useState<Option[]>(controlledOptions || defaultOptions)
-    const [inputValue, setInputValue] = React.useState("")
-    const debouncedInput = useDebounce(inputValue, delay)
+    const containerRef = React.useRef<HTMLDivElement>(null)
+    const inputRef = React.useRef<HTMLInputElement>(null)
+    const dropdownRef = React.useRef<HTMLDivElement>(null)
 
-    React.useImperativeHandle(
-      ref,
-      () => ({
-        selectedValue: selected,
-        input: inputRef.current,
-      }),
-      [selected]
-    )
+    // Use controlled value if provided, otherwise use internal state
+    const [internalSelectedOptions, setInternalSelectedOptions] = React.useState<Option[]>(defaultValue)
+    const selectedOptions = value !== undefined ? value : internalSelectedOptions
 
-    const handleUnselect = React.useCallback(
-      (option: Option) => {
-        if (option.fixed) return
-        const newSelected = selected.filter((s) => s.value !== option.value)
-        setSelected(newSelected)
-        onChange?.(newSelected)
-      },
-      [selected, onChange]
-    )
+    // Use provided options or internal state for available options
+    const [internalAvailableOptions, setInternalAvailableOptions] = React.useState(options)
+    const availableOptions = onSearch ? internalAvailableOptions : options
 
-    const handleSelect = React.useCallback(
-      (option: Option) => {
-        if (selected.length >= maxSelected) {
-          onMaxSelected?.(maxSelected)
-          return
-        }
-        const newSelected = [...selected, option]
-        setSelected(newSelected)
-        onChange?.(newSelected)
-        setInputValue("")
-      },
-      [selected, maxSelected, onMaxSelected, onChange]
-    )
+    // Debounced search value for async search
+    const debouncedSearchValue = useDebounce(searchValue, searchDelay)
 
-    const handleClearAll = () => {
-      const nonFixedOptions = selected.filter((option) => !option.fixed)
-      if (nonFixedOptions.length === 0) return
-      const fixedOptions = selected.filter((option) => option.fixed)
-      setSelected(fixedOptions)
-      onChange?.(fixedOptions)
-    }
-
-    const createOption = (inputValue: string): Option => ({
-      value: inputValue.toLowerCase(),
-      label: inputValue,
-    })
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (e.key === "Backspace" && !inputValue && selected.length > 0) {
-        e.preventDefault()
-        const lastOption = selected[selected.length - 1]
-        if (!lastOption.fixed) handleUnselect(lastOption)
-      }
-
-      if (e.key === "Enter" && creatable && inputValue) {
-        e.preventDefault()
-        const newOption = createOption(inputValue)
-        handleSelect(newOption)
-        setInputValue("")
-      }
-    }
-
+    // Handle debounced async search
     React.useEffect(() => {
-      if (!onSearch && !onSearchSync) return
+      if (!onSearch || !debouncedSearchValue.trim()) {
+        setIsLoading(false)
+        return
+      }
 
-      const handleSearch = async () => {
+      const performSearch = async () => {
         setIsLoading(true)
         try {
-          let searchResults: Option[] = []
-          if (onSearchSync) {
-            searchResults = onSearchSync(debouncedInput)
-          } else if (onSearch) {
-            searchResults = await onSearch(debouncedInput)
-          }
-          setOptions(searchResults)
+          const results = await onSearch(debouncedSearchValue)
+          setInternalAvailableOptions(results)
+        } catch (error) {
+          console.error('Search error:', error)
+          setInternalAvailableOptions([])
         } finally {
           setIsLoading(false)
         }
       }
 
-      if (debouncedInput || triggerSearchOnFocus) {
-        handleSearch()
-      } else {
-        setOptions(controlledOptions || defaultOptions)
-      }
-    }, [debouncedInput, onSearch, onSearchSync, triggerSearchOnFocus, controlledOptions, defaultOptions])
+      performSearch()
+    }, [debouncedSearchValue, onSearch])
 
-    const showPlaceholder = !hidePlaceholderWhenSelected || selected.length === 0
+    // Handle clicks outside to close dropdown
+    React.useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (
+          containerRef.current &&
+          !containerRef.current.contains(event.target as Node) &&
+          dropdownRef.current &&
+          !dropdownRef.current.contains(event.target as Node)
+        ) {
+          setIsOpen(false)
+        }
+      }
+
+      document.addEventListener("mousedown", handleClickOutside)
+      return () => document.removeEventListener("mousedown", handleClickOutside)
+    }, [])
+
+    const handleSelect = React.useCallback((option: Option) => {
+      if (selectedOptions.length >= maxSelected) {
+        onMaxSelected?.(maxSelected)
+        return
+      }
+
+      const newSelected = [...selectedOptions, option]
+      if (value === undefined) {
+        setInternalSelectedOptions(newSelected)
+      }
+      onChange?.(newSelected)
+      setSearchValue("")
+      setIsOpen(false)
+      
+      // Focus back on input after selection
+      setTimeout(() => inputRef.current?.focus(), 0)
+    }, [selectedOptions, maxSelected, onMaxSelected, onChange, value])
+
+    const handleRemove = React.useCallback((optionToRemove: Option) => {
+      if (optionToRemove.fixed) return
+
+      const newSelected = selectedOptions.filter(
+        option => option.value !== optionToRemove.value
+      )
+      if (value === undefined) {
+        setInternalSelectedOptions(newSelected)
+      }
+      onChange?.(newSelected)
+    }, [selectedOptions, onChange, value])
+
+    const handleSearch = React.useCallback((value: string) => {
+      setSearchValue(value)
+      setIsOpen(true)
+      
+      // For non-async search, filter immediately
+      if (!onSearch && value.trim()) {
+        setIsLoading(false)
+      }
+    }, [onSearch])
+
+    const handleCreateOption = React.useCallback(() => {
+      if (!searchValue.trim()) return
+
+      const newOption: Option = {
+        value: searchValue.toLowerCase(),
+        label: searchValue.trim(),
+      }
+
+      handleSelect(newOption)
+    }, [searchValue, handleSelect])
+
+    const handleInputFocus = () => {
+      setIsOpen(true)
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpen(false)
+        inputRef.current?.blur()
+      }
+    }
+
+    // Filter and group options
+    const filteredOptions = React.useMemo(() => {
+      return availableOptions.filter(option => 
+        !selectedOptions.some(selected => selected.value === option.value) &&
+        (searchValue === "" || option.label.toLowerCase().includes(searchValue.toLowerCase()))
+      )
+    }, [availableOptions, selectedOptions, searchValue])
 
     const groupedOptions = React.useMemo(() => {
-      if (!groupBy) return options
-
-      return options.reduce((groups, option) => {
-        const key = option[groupBy] || ""
-        return {
-          ...groups,
-          [key]: [...(groups[key] || []), option],
+      const groups: Record<string, Option[]> = {}
+      
+      filteredOptions.forEach(option => {
+        const group = option.group || "Options"
+        if (!groups[group]) {
+          groups[group] = []
         }
-      }, {} as Record<string, Option[]>)
-    }, [options, groupBy])
+        groups[group].push(option)
+      })
+
+      return groups
+    }, [filteredOptions])
+
+    const hasOptions = Object.keys(groupedOptions).length > 0
+    const showCreateOption = creatable && searchValue.trim() && !filteredOptions.some(opt => opt.label.toLowerCase() === searchValue.toLowerCase())
+
+    // Default loading indicator
+    const defaultLoadingIndicator = (
+      <div className="flex items-center justify-center py-6">
+        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+        <span className="text-sm text-muted-foreground">Searching...</span>
+      </div>
+    )
+
+    // Default empty indicator
+    const defaultEmptyIndicator = (
+      <div className="px-2 py-1.5 text-sm text-muted-foreground">
+        No options available
+      </div>
+    )
 
     return (
-      <Command
-        onKeyDown={handleKeyDown}
-        className={cn(
-          "overflow-visible bg-transparent",
-          className
-        )}
-      >
-        <div className="group rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
-          <div className="flex flex-wrap gap-1">
-            {selected.map((option) => (
-              <Badge
-                key={option.value}
-                variant="secondary"
-                className={cn(
-                  "data-[fixed=true]:bg-muted data-[fixed=true]:hover:bg-muted",
-                  "data-[disabled=true]:bg-muted-foreground data-[disabled=true]:text-muted data-[disabled=true]:hover:bg-muted-foreground",
-                  badgeClassName
-                )}
-                data-fixed={option.fixed}
-                data-disabled={option.disabled}
-              >
-                {option.label}
-                {!option.fixed && (
-                  <button
-                    className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleUnselect(option)
-                      }
-                    }}
-                    onMouseDown={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                    }}
-                    onClick={() => handleUnselect(option)}
-                  >
-                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-                  </button>
-                )}
-              </Badge>
-            ))}
-            <CommandInput
-              ref={inputRef}
-              value={inputValue}
-              onValueChange={setInputValue}
-              placeholder={showPlaceholder ? placeholder : ""}
-              disabled={disabled}
-              className="ml-2 flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
-            />
-          </div>
-        </div>
-        <div className="relative mt-2">
-          {open && (
-            <div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
-              <CommandList className="max-h-[300px] overflow-y-auto p-1">
-                {isLoading ? (
-                  <CommandPrimitive.Loading>
-                    {loadingIndicator || (
-                      <div className="flex items-center justify-center py-6">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      </div>
-                    )}
-                  </CommandPrimitive.Loading>
-                ) : (
-                  <>
-                    {!hideClearAllButton && selected.length > 0 && (
-                      <>
-                        <CommandItem
-                          onSelect={handleClearAll}
-                          className="justify-center text-center"
-                        >
-                          Clear all
-                        </CommandItem>
-                        <CommandSeparator />
-                      </>
-                    )}
-                    {groupBy ? (
-                      Object.entries(groupedOptions).map(([group, groupOptions]) => (
-                        <CommandGroup key={group} heading={group || "Options"}>
-                          {groupOptions.map((option) => (
-                            <CommandItem
-                              key={option.value}
-                              value={option.value}
-                              disabled={option.disabled}
-                              onSelect={() => handleSelect(option)}
-                              className="flex items-center justify-between"
-                            >
-                              {option.label}
-                              {selected.some((s) => s.value === option.value) && (
-                                <Check className="h-4 w-4" />
-                              )}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      ))
-                    ) : (
-                      <CommandGroup>
-                        {options.length === 0 && (
-                          <CommandEmpty>
-                            {emptyIndicator || (
-                              <span>No options found.</span>
-                            )}
-                            {creatable && inputValue && (
-                              <CommandItem
-                                onSelect={() => handleSelect(createOption(inputValue))}
-                              >
-                                Create "{inputValue}"
-                              </CommandItem>
-                            )}
-                          </CommandEmpty>
-                        )}
-                        {options.map((option) => (
-                          <CommandItem
-                            key={option.value}
-                            value={option.value}
-                            disabled={option.disabled}
-                            onSelect={() => handleSelect(option)}
-                            className="flex items-center justify-between"
-                          >
-                            {option.label}
-                            {selected.some((s) => s.value === option.value) && (
-                              <Check className="h-4 w-4" />
-                            )}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    )}
-                  </>
-                )}
-              </CommandList>
-            </div>
+      <div ref={ref} className="relative">
+        <div
+          ref={containerRef}
+          className={cn(
+            "flex min-h-10 w-full flex-wrap items-center gap-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background",
+            "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+            disabled && "cursor-not-allowed opacity-50",
+            className
           )}
+          onClick={() => {
+            if (!disabled) {
+              inputRef.current?.focus()
+              setIsOpen(true)
+            }
+          }}
+        >
+          {selectedOptions.map((option) => (
+            <Badge
+              key={option.value}
+              variant="secondary"
+              className={cn(
+                "gap-1 pr-0.5",
+                option.fixed && "bg-muted hover:bg-muted",
+                option.disabled && "bg-muted-foreground text-muted hover:bg-muted-foreground",
+                badgeClassName
+              )}
+            >
+              <span className="text-xs">{option.label}</span>
+              {!option.fixed && (
+                <button
+                  type="button"
+                  className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    handleRemove(option)
+                  }}
+                  disabled={disabled}
+                >
+                  <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                </button>
+              )}
+            </Badge>
+          ))}
+          <Input
+            ref={inputRef}
+            value={searchValue}
+            onChange={(e) => handleSearch(e.target.value)}
+            onFocus={handleInputFocus}
+            onKeyDown={handleKeyDown}
+            className="h-6 flex-1 border-0 bg-transparent p-0 placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+            disabled={disabled}
+            placeholder={
+              hidePlaceholderWhenSelected && selectedOptions.length > 0 
+                ? "" 
+                : selectedOptions.length === 0 
+                  ? placeholder 
+                  : ""
+            }
+          />
+          <ChevronDown className="h-4 w-4 opacity-50" />
         </div>
-      </Command>
+
+        {isOpen && (
+          <div
+            ref={dropdownRef}
+            className="absolute top-full z-50 mt-1 max-h-60 w-full overflow-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
+          >
+            {isLoading ? (
+              loadingIndicator || defaultLoadingIndicator
+            ) : hasOptions ? (
+              Object.entries(groupedOptions).map(([group, options]) => (
+                <div key={group}>
+                  {group !== "Options" && (
+                    <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
+                      {group}
+                    </div>
+                  )}
+                  {options.map((option) => (
+                    <div
+                      key={option.value}
+                      className={cn(
+                        "relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
+                        "hover:bg-accent hover:text-accent-foreground",
+                        option.disabled && "pointer-events-none opacity-50"
+                      )}
+                      onClick={() => !option.disabled && handleSelect(option)}
+                    >
+                      {option.label}
+                    </div>
+                  ))}
+                </div>
+              ))
+            ) : showCreateOption ? (
+              <div
+                className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                onClick={handleCreateOption}
+              >
+                Create "{searchValue}"
+              </div>
+            ) : (
+              emptyIndicator || defaultEmptyIndicator
+            )}
+            {hasOptions && showCreateOption && (
+              <div
+                className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                onClick={handleCreateOption}
+              >
+                Create "{searchValue}"
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     )
   }
 )
 
-MultipleSelector.displayName = "MultipleSelector"
-
-export { MultipleSelector } 
+MultipleSelector.displayName = "MultipleSelector" 

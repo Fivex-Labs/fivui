@@ -1,0 +1,19 @@
+{
+  "name": "tree-view",
+  "type": "components:ui",
+  "dependencies": [
+    "lucide-react",
+    "class-variance-authority",
+    "clsx",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "tree-view.tsx",
+      "template": "templates/tree-view.tsx"
+    }
+  ]
+} 

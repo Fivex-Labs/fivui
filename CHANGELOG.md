@@ -11,6 +11,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [1.2.7] - 2024-12-28
+
+### Added
+- Tree View component with hierarchical data display
+- Multiple selection support and expand/collapse functionality
+- Customizable icons and node states (disabled, selected, expanded)
+- Keyboard navigation and accessibility features
+- Compound components for flexible layout (TreeViewRoot, TreeViewLabel, TreeViewContent)
+- Two variants (default, outline) and three sizes (sm, md, lg)
+
+## [1.2.6] - 2024-12-28
+
+### Added
+- Timeline component with multiple variants (subtle, solid, outline, plain) and sizes (sm, md, lg, xl)
+- Comprehensive timeline system with TimelineItem, TimelineConnector, TimelineIndicator, TimelineSeparator, TimelineContent, TimelineTitle, and TimelineDescription components
+- Data-slot based styling system for flexible customization
+
 ### Deprecated
 
 ### Removed

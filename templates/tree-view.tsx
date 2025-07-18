@@ -32,7 +32,7 @@ export interface TreeNode {
   children?: TreeNode[]
   icon?: React.ReactNode
   disabled?: boolean
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface TreeViewProps

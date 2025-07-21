@@ -57,34 +57,14 @@ const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
                 spinnerClassName
               )}
             >
+              <div className="h-2 w-2 animate-intermittent rounded-full bg-current" />
               <div
-                className="h-2 w-2 rounded-full bg-current"
-                style={{
-                  animationName: 'intermittent',
-                  animationDuration: '1s',
-                  animationTimingFunction: 'ease-in-out',
-                  animationIterationCount: 'infinite',
-                }}
+                className="h-2 w-2 animate-intermittent rounded-full bg-current"
+                style={{ animationDelay: '0.2s' }}
               />
               <div
-                className="h-2 w-2 rounded-full bg-current"
-                style={{
-                  animationName: 'intermittent',
-                  animationDuration: '1s',
-                  animationTimingFunction: 'ease-in-out',
-                  animationIterationCount: 'infinite',
-                  animationDelay: '0.2s',
-                }}
-              />
-              <div
-                className="h-2 w-2 rounded-full bg-current"
-                style={{
-                  animationName: 'intermittent',
-                  animationDuration: '1s',
-                  animationTimingFunction: 'ease-in-out',
-                  animationIterationCount: 'infinite',
-                  animationDelay: '0.4s',
-                }}
+                className="h-2 w-2 animate-intermittent rounded-full bg-current"
+                style={{ animationDelay: '0.4s' }}
               />
             </div>
           )

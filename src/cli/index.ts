@@ -11,7 +11,7 @@ const program = new Command();
 program
   .name('fivui')
   .description('FivUI CLI - A modern UI component library for React')
-  .version('1.2.8');
+  .version('1.2.9');
 
 function detectTailwindVersion(): '3' | '4' | null {
   try {

@@ -1,0 +1,20 @@
+{
+    "name": "transfer-list",
+    "type": "components:ui",
+    "dependencies": [
+      "lucide-react"
+    ],
+    "registryDependencies": [
+      "button",
+      "checkbox",
+      "input",
+      "scroll-area",
+      "utils"
+    ],
+    "files": [
+      {
+        "name": "transfer-list.tsx",
+        "template": "templates/transfer-list.tsx"
+      }
+    ]
+  } 

@@ -11,7 +11,7 @@ const program = new Command();
 program
   .name('fivui')
   .description('FivUI CLI - A modern UI component library for React')
-  .version('1.3.1');
+  .version('1.3.3');
 
 function detectTailwindVersion(): '3' | '4' | null {
   try {
@@ -181,6 +181,14 @@ function copyComponent(componentName: string) {
         // Use component path from config
         const componentDir = resolveComponentPath(config, workspace, 'ui');
         targetPath = join(componentDir, file.name);
+      } else if (registry.type === 'components:ui:appkit') {
+        // Handle appkit components - create appkit subdirectory structure
+        const componentDir = resolveComponentPath(config, workspace, 'ui');
+        // Extract component name from the file name (remove 'appkit-' prefix and .tsx extension)
+        const appkitComponentName = file.name.replace(/^appkit-/, '').replace(/\.tsx$/, '');
+        // Create appkit subdirectory structure
+        const appkitDir = join(componentDir, 'appkit', appkitComponentName);
+        targetPath = join(appkitDir, 'index.tsx');
       } else if (registry.type === 'components:lib') {
         // Use lib path from config
         const libDir = resolveComponentPath(config, workspace, 'lib');
@@ -254,7 +262,15 @@ function copyComponent(componentName: string) {
       // Capitalize the component name for the import example
       const capitalizedComponentName = componentName.charAt(0).toUpperCase() + componentName.slice(1);
       console.log(`\n💡 In your app, import like this:`);
-      console.log(`   import { ${capitalizedComponentName} } from "${config.aliases.ui || '@workspace/ui/components'}/${componentName}";`);
+      
+      if (registry.type === 'components:ui:appkit') {
+        // For appkit components, show the correct import path (remove 'appkit-' prefix)
+        const appkitFolderName = componentName.replace(/^appkit-/, '');
+        console.log(`   import { ${capitalizedComponentName} } from "${config.aliases.ui || '@workspace/ui/components'}/appkit/${appkitFolderName}";`);
+      } else {
+        // For regular components
+        console.log(`   import { ${capitalizedComponentName} } from "${config.aliases.ui || '@workspace/ui/components'}/${componentName}";`);
+      }
     }
     
   } catch (error) {

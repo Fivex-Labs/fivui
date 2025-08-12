@@ -11,6 +11,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [1.3.3] - 2025-01-17
+
+### Fixed
+- 🔧 **Appkit Component Paths**: Fixed appkit component installation paths
+  - Components now install to `components/ui/appkit/email/` instead of `components/ui/appkit/appkit-email/`
+  - Correct import paths shown: `@/components/ui/appkit/email` instead of `@/components/ui/appkit/appkit-email`
+  - Proper folder naming by removing `appkit-` prefix from component names
+
+## [1.3.2] - 2025-01-17
+
+### Added
+- ✨ **Appkit Components Support**: New component type for complex application kits
+  - Support for `components:ui:appkit` type in registry
+  - Automatic creation of `components/ui/appkit/<component-name>/index.tsx` structure
+  - First appkit component: Email application kit with full email client functionality
+  - Mobile-responsive design with sidebar navigation
+  - Thread management, search, and compose functionality
+  - Label system and folder organization
+  - Attachment handling and conversation threading
+
+### Enhanced
+- 🔧 **CLI Updates**: Enhanced CLI to handle appkit component installation
+  - Proper directory structure creation for appkit components
+  - Correct import path generation for appkit components
+  - Support for complex component hierarchies and dependencies
+
+## [1.3.1] - 2025-01-17
+
 ## [1.2.7] - 2024-12-28
 
 ### Added

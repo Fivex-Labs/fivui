@@ -332,7 +332,7 @@ export const MultipleSelector = React.forwardRef<HTMLDivElement, MultipleSelecto
                 className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
                 onClick={handleCreateOption}
               >
-                Create "{searchValue}"
+                {`Create "${searchValue}"`}
               </div>
             ) : (
               emptyIndicator || defaultEmptyIndicator
@@ -342,7 +342,7 @@ export const MultipleSelector = React.forwardRef<HTMLDivElement, MultipleSelecto
                 className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
                 onClick={handleCreateOption}
               >
-                Create "{searchValue}"
+                {`Create "${searchValue}"`}
               </div>
             )}
           </div>

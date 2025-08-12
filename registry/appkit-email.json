@@ -1,0 +1,27 @@
+{
+    "name": "appkit-email",
+    "type": "components:ui:appkit",
+    "dependencies": [
+      "lucide-react"
+    ],
+    "registryDependencies": [
+      "button",
+      "input",
+      "dropdown-menu",
+      "multiple-selector",
+      "card",
+      "dialog",
+      "scroll-area",
+      "label",
+      "textarea",
+      "accordion",
+      "resizable",
+      "utils"
+    ],
+    "files": [
+      {
+        "name": "appkit-email.tsx",
+        "template": "templates/appkit/email/index.tsx"
+      }
+    ]
+  } 

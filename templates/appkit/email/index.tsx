@@ -24,6 +24,7 @@ export interface FivuiEmailFolder {
 export interface FivuiEmailThread {
   id: string
   from: string
+  fromEmail?: string
   subject: string
   snippet: string
   datetime: string
@@ -116,20 +117,14 @@ export function FivuiAppkitEmail({
   loadingThreads,
   selectedThreadId,
   onThreadSelect,
-  message,
   loadingMessage,
   onCompose,
   emptyThreadsText = "No emails",
-  loadingIndicator,
   mailboxTitle = "INBOX",
-  pageInfo,
-  onPrevPage,
-  onNextPage,
   labelsPalette,
   availableLabels,
   selectedLabel,
   onSelectLabel,
-  conversation,
   onSendEmail,
   onLoadMoreThreads,
   hasMoreThreads,
@@ -202,7 +197,7 @@ export function FivuiAppkitEmail({
   const contactOptions = React.useMemo<MultiOption[]>(() => {
     const map = new Map<string, MultiOption>()
     threads.forEach(t => {
-      const email = (t as any).fromEmail || `${t.from.split(" ")[0].toLowerCase()}@example.com`
+      const email = t.fromEmail || `${t.from.split(" ")[0].toLowerCase()}@example.com`
       const opt = { value: email, label: email } as MultiOption
       map.set(email, opt)
     })
@@ -224,26 +219,22 @@ export function FivuiAppkitEmail({
   }
 
   return (
-    <div className={cn("h-full w-full md:w-auto md:border md:rounded-2xl overflow-hidden bg-background/50", className)}>
-      <div className="md:hidden flex items-center justify-between border-b px-3 py-2">
-        <button className="p-2 rounded hover:bg-accent/60" onClick={() => setSidebarOpen(true)} aria-label="Open sidebar">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-        </button>
-        <div className="font-semibold">{mobileView === 'list' ? mailboxTitle : 'Message'}</div>
-        {mobileView === 'detail' ? (
-          <button className="p-2 rounded hover:bg-accent/60" onClick={() => setMobileView('list')} aria-label="Back to list">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </button>
-        ) : <span className="w-8" />}
-      </div>
+    <div className={cn("relative h-full w-full md:w-auto md:border md:rounded-2xl overflow-hidden bg-background/50", className)}>
 
       {/* Mobile overlay sidebar */}
       {sidebarOpen && (
-        <div className="md:hidden fixed inset-0 z-40 bg-black/60" onClick={() => setSidebarOpen(false)}>
+        <div className="md:hidden absolute inset-0 z-40 bg-black/60" onClick={() => setSidebarOpen(false)}>
           <div className="absolute left-0 top-0 h-full w-72 bg-background border-r" onClick={(e) => e.stopPropagation()}>
             <ScrollArea className="h-full overscroll-contain">
             <div className="p-4 flex flex-col gap-4">
-              <Button size="sm" className="w-full" onClick={() => { onCompose ? onCompose() : openComposer("new"); setSidebarOpen(false) }}>Compose</Button>
+              <Button size="sm" className="w-full" onClick={() => { 
+                if (onCompose) { 
+                  onCompose() 
+                } else { 
+                  openComposer("new") 
+                } 
+                setSidebarOpen(false) 
+              }}>Compose</Button>
               <div className="text-[11px] font-semibold tracking-wider" style={{ color: 'var(--muted-foreground)' }}>MAILBOXES</div>
               <nav className="space-y-1 text-sm" aria-label="Mailboxes">
                 {folders.map((f) => {
@@ -279,7 +270,13 @@ export function FivuiAppkitEmail({
           <div className="h-full border-r overflow-hidden">
             <ScrollArea className="h-full overscroll-contain">
               <div className="p-4 flex flex-col gap-4">
-                <Button size="sm" className="w-full" onClick={() => (onCompose ? onCompose() : openComposer("new"))}>Compose</Button>
+                <Button size="sm" className="w-full" onClick={() => {
+                  if (onCompose) {
+                    onCompose()
+                  } else {
+                    openComposer("new")
+                  }
+                }}>Compose</Button>
                 <div className="text-[11px] font-semibold tracking-wider" style={{ color: 'var(--muted-foreground)' }}>MAILBOXES</div>
                 <nav className="space-y-1 text-sm" aria-label="Mailboxes">
                   {folders.map((f) => {
@@ -478,16 +475,19 @@ export function FivuiAppkitEmail({
         </ResizablePanel>
       </ResizablePanelGroup>
       {/* Mobile content */}
-      <div className="md:hidden fixed inset-0 z-10 h-full w-full overflow-hidden bg-background">
+      <div className="md:hidden absolute inset-0 h-full w-full overflow-hidden bg-background">
         {mobileView === 'list' ? (
-          <div className="h-full w-full grid grid-rows-[auto_minmax(0,1fr)]">
+          <div className="h-full w-full grid grid-rows-[auto_auto_minmax(0,1fr)] overflow-hidden">
             <div className="border-b p-3 flex items-center gap-3">
               <button className="p-2 rounded hover:bg-accent/60" aria-label="Open menu" onClick={() => setSidebarOpen(true)}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
               </button>
+              <div className="font-semibold">{mailboxTitle || 'INBOX'}</div>
+            </div>
+            <div className="p-3 border-b">
               <Input placeholder="Search mail" className="h-9 w-full" value={searchValue} onChange={(e) => onSearchChange?.(e.target.value)} aria-label="Search mail" />
             </div>
-            <ScrollArea className="min-h-0 h-full overscroll-contain">
+            <ScrollArea className="min-h-0 h-full overscroll-contain overflow-hidden">
               <div className="divide-y">
                 {threads.map((t) => (
                   <button key={t.id} type="button" onClick={() => handleSelectThread(t.id)} className="w-full text-left p-4 hover:bg-accent/60">
@@ -503,11 +503,11 @@ export function FivuiAppkitEmail({
             </ScrollArea>
           </div>
         ) : (
-          <ScrollArea className="h-full w-full overscroll-contain">
+          <ScrollArea className="h-full w-full overscroll-contain overflow-hidden">
             <div className="p-4 space-y-4">
               {selectedThread ? (
                 <>
-                  <div className="sticky top-0 z-10 bg-background/90 backdrop-blur border-b -mx-4 px-4 py-2 flex items-center gap-2">
+                  <div className="sticky top-0 z-10 bg-background/90 backdrop-blur border-b py-2 flex items-center gap-2">
                     <button className="p-2 rounded hover:bg-accent/60" aria-label="Back" onClick={() => setMobileView('list')}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     </button>
@@ -548,7 +548,7 @@ export function FivuiAppkitEmail({
                         <span className="text-foreground font-medium">{m.from}</span>
                         <span>· {m.datetime}</span>
                       </div>
-                      <Card className="p-4 prose prose-neutral dark:prose-invert max-w-none">{m.html ? (<div dangerouslySetInnerHTML={{ __html: m.html }} />) : (m.body)}</Card>
+                      <Card className="p-4 prose prose-neutral dark:prose-invert max-w-none overflow-hidden">{m.html ? (<div className="overflow-hidden" dangerouslySetInnerHTML={{ __html: m.html }} />) : (m.body)}</Card>
                     </div>
                   ))}
 

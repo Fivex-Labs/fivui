@@ -11,6 +11,7 @@ import {
   DndContext,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragEndEvent,
@@ -64,9 +65,6 @@ export interface FivuiKanbanAppkitProps {
   className?: string
   columns: FivuiKanbanColumn[]
   onColumnsChange?: (columns: FivuiKanbanColumn[]) => void
-  onTaskCreate?: (task: Omit<FivuiKanbanTask, "id" | "createdAt" | "updatedAt">) => void
-  onTaskUpdate?: (taskId: string, updates: Partial<FivuiKanbanTask>) => void
-  onColumnUpdate?: (columnId: string, updates: Partial<FivuiKanbanColumn>) => void
   showPriority?: boolean
   showAssignee?: boolean
   showDueDate?: boolean
@@ -127,8 +125,8 @@ function SortableTask({ task, showPriority, showAssignee, showDueDate, showTimeT
       ref={setNodeRef}
       style={style}
       className={cn(
-        "p-3 cursor-grab active:cursor-grabbing hover:shadow-md transition-all duration-200",
-        isDragging && "opacity-50 shadow-lg"
+        "p-3 cursor-grab active:cursor-grabbing hover:shadow-md transition-all duration-200 touch-manipulation",
+        isDragging && "opacity-50 shadow-lg scale-105"
       )}
       {...attributes}
       {...listeners}
@@ -254,9 +252,6 @@ export function FivuiAppkitKanban({
   className,
   columns,
   onColumnsChange,
-  onTaskCreate,
-  onTaskUpdate,
-  onColumnUpdate,
   showPriority = true,
   showAssignee = true,
   showDueDate = true,
@@ -274,7 +269,17 @@ export function FivuiAppkitKanban({
   const [hoveredColumn, setHoveredColumn] = React.useState<string | null>(null)
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Require 8px of movement before drag starts
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 100, // 100ms delay before drag starts on touch
+        tolerance: 8, // Allow 8px of movement during delay
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -447,7 +452,7 @@ export function FivuiAppkitKanban({
           items={localColumns.flatMap(col => col.tasks.map(task => task.id))}
           strategy={verticalListSortingStrategy}
         >
-          <div className="flex h-full gap-4 overflow-x-auto p-4">
+          <div className="flex h-full gap-4 overflow-x-auto p-4 touch-pan-x overscroll-x-contain scroll-smooth">
             {localColumns.map((column) => (
               <DroppableColumn
                 key={column.id}

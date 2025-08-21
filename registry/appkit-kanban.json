@@ -1,0 +1,23 @@
+{
+    "name": "appkit-kanban",
+    "type": "components:ui:appkit",
+    "dependencies": [
+      "lucide-react",
+      "@dnd-kit/core",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities"
+    ],
+    "registryDependencies": [
+      "card",
+      "scroll-area",
+      "badge",
+      "avatar",
+      "utils"
+    ],
+    "files": [
+      {
+        "name": "appkit-kanban.tsx",
+        "template": "templates/appkit/kanban/index.tsx"
+      }
+    ]
+  } 

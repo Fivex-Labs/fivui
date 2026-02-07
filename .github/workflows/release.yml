@@ -112,7 +112,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
@@ -131,37 +131,6 @@ jobs:
 
       - name: Publish to npm
         run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  # Temporarily disabled GitHub Packages publishing due to private repo restrictions
-  # publish-github-packages:
-  #   needs: [check-version, build-and-test]
-  #   if: needs.check-version.outputs.should-release == 'true'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #     - name: Setup Node.js for GitHub Packages
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: '20'
-  #         cache: 'npm'
-  #         registry-url: 'https://npm.pkg.github.com'
-  #     - name: Download build artifacts
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: build-artifacts
-  #     - name: Install dependencies
-  #       run: npm ci
-  #     - name: Configure package for GitHub Packages
-  #       run: |
-  #         jq '.name = "@fivexlabs/fivui" | .publishConfig = {"registry": "https://npm.pkg.github.com", "@fivexlabs:registry": "https://npm.pkg.github.com"}' package.json > package-gh.json
-  #         mv package-gh.json package.json
-  #     - name: Publish to GitHub Packages
-  #       run: npm publish
-  #       env:
-  #         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   create-release:
     needs: [check-version, publish-npm]

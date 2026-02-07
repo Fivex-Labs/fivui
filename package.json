@@ -54,10 +54,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Fivex-Labs/fivui-lib"
+    "url": "git+https://github.com/Fivex-Labs/fivui.git"
   },
   "bugs": {
-    "url": "https://github.com/Fivex-Labs/fivui-lib/issues"
+    "url": "https://github.com/Fivex-Labs/fivui/issues"
   },
   "homepage": "https://ui.fivexlabs.com",
   "author": "Fivex Labs (https://fivexlabs.com)",

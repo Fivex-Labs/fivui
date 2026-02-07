@@ -1,14 +1,15 @@
 {
   "name": "switch",
   "type": "components:ui",
-  "dependencies": [
-    "@radix-ui/react-switch"
-  ],
   "registryDependencies": [],
-  "files": [
-    {
-      "name": "switch.tsx",
-      "template": "templates/switch.tsx"
+  "variants": {
+    "radix": {
+      "dependencies": ["@radix-ui/react-switch"],
+      "files": [{"name": "switch.tsx", "template": "templates/switch.tsx"}]
+    },
+    "base": {
+      "dependencies": ["@base-ui/react/switch"],
+      "files": [{"name": "switch.tsx", "template": "templates/base/switch.tsx"}]
     }
-  ]
-} 
+  }
+}

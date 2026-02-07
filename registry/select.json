@@ -1,15 +1,15 @@
 {
   "name": "select",
   "type": "components:ui",
-  "dependencies": [
-    "@radix-ui/react-select",
-    "lucide-react"
-  ],
   "registryDependencies": [],
-  "files": [
-    {
-      "name": "select.tsx",
-      "template": "templates/select.tsx"
+  "variants": {
+    "radix": {
+      "dependencies": ["@radix-ui/react-select", "lucide-react"],
+      "files": [{"name": "select.tsx", "template": "templates/select.tsx"}]
+    },
+    "base": {
+      "dependencies": ["@base-ui/react/select", "lucide-react"],
+      "files": [{"name": "select.tsx", "template": "templates/base/select.tsx"}]
     }
-  ]
-} 
+  }
+}

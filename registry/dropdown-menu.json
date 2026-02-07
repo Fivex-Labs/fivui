@@ -1,17 +1,15 @@
 {
   "name": "dropdown-menu",
   "type": "components:ui",
-  "dependencies": [
-    "@radix-ui/react-dropdown-menu",
-    "lucide-react"
-  ],
-  "registryDependencies": [
-    "utils"
-  ],
-  "files": [
-    {
-      "name": "dropdown-menu.tsx",
-      "template": "templates/dropdown-menu.tsx"
+  "registryDependencies": ["utils"],
+  "variants": {
+    "radix": {
+      "dependencies": ["@radix-ui/react-dropdown-menu", "lucide-react"],
+      "files": [{"name": "dropdown-menu.tsx", "template": "templates/dropdown-menu.tsx"}]
+    },
+    "base": {
+      "dependencies": ["@base-ui/react/menu", "lucide-react"],
+      "files": [{"name": "dropdown-menu.tsx", "template": "templates/base/dropdown-menu.tsx"}]
     }
-  ]
-} 
+  }
+}

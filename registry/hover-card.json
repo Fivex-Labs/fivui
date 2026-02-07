@@ -1,16 +1,15 @@
 {
   "name": "hover-card",
   "type": "components:ui",
-  "dependencies": [
-    "@radix-ui/react-hover-card"
-  ],
-  "registryDependencies": [
-    "utils"
-  ],
-  "files": [
-    {
-      "name": "hover-card.tsx",
-      "template": "templates/hover-card.tsx"
+  "registryDependencies": ["utils"],
+  "variants": {
+    "radix": {
+      "dependencies": ["@radix-ui/react-hover-card"],
+      "files": [{"name": "hover-card.tsx", "template": "templates/hover-card.tsx"}]
+    },
+    "base": {
+      "dependencies": ["@base-ui/react/preview-card"],
+      "files": [{"name": "hover-card.tsx", "template": "templates/base/hover-card.tsx"}]
     }
-  ]
-} 
+  }
+}

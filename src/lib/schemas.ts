@@ -11,6 +11,8 @@ export interface ComponentsConfig {
     version?: '3' | '4';
   };
   iconLibrary?: 'lucide' | 'radix-icons';
+  /** UI primitive library: 'radix' (default) or 'base'. Used when adding components without --radix/--base flag. */
+  uiLibrary?: 'radix' | 'base';
   aliases: {
     components: string;
     utils: string;
@@ -25,16 +27,27 @@ export interface ComponentKeyframes {
   css: string;
 }
 
+export interface RegistryComponentVariant {
+  dependencies?: string[];
+  devDependencies?: string[];
+  files: { name: string; template: string }[];
+}
+
 export interface RegistryComponent {
   name: string;
   type: string;
-  dependencies?: string[];
+  /** Shared across variants */
   registryDependencies?: string[];
   keyframes?: ComponentKeyframes[];
-  files: {
-    name: string;
-    template: string;
-  }[];
+  /** Legacy flat format (for components with no variants) */
+  dependencies?: string[];
+  devDependencies?: string[];
+  files?: { name: string; template: string }[];
+  /** Variant-aware format (radix | base) */
+  variants?: {
+    radix?: RegistryComponentVariant;
+    base?: RegistryComponentVariant;
+  };
 }
 
 export interface WorkspaceInfo {
@@ -48,6 +61,7 @@ export const DEFAULT_COMPONENTS_CONFIG: ComponentsConfig = {
   $schema: 'https://ui.fivexlabs.com/fivui.schema.json',
   style: 'default',
   tsx: true,
+  uiLibrary: 'radix',
   tailwind: {
     config: 'tailwind.config.js',
     css: 'src/styles/globals.css',
@@ -67,6 +81,7 @@ export const MONOREPO_COMPONENTS_CONFIG: ComponentsConfig = {
   $schema: 'https://ui.fivexlabs.com/fivui.schema.json',
   style: 'default',
   tsx: true,
+  uiLibrary: 'radix',
   tailwind: {
     config: 'tailwind.config.js',
     css: 'packages/ui/src/styles/globals.css',

@@ -1,14 +1,15 @@
 {
   "name": "slider",
   "type": "components:ui",
-  "dependencies": [
-    "@radix-ui/react-slider"
-  ],
   "registryDependencies": [],
-  "files": [
-    {
-      "name": "slider.tsx",
-      "template": "templates/slider.tsx"
+  "variants": {
+    "radix": {
+      "dependencies": ["@radix-ui/react-slider"],
+      "files": [{"name": "slider.tsx", "template": "templates/slider.tsx"}]
+    },
+    "base": {
+      "dependencies": ["@base-ui/react/slider"],
+      "files": [{"name": "slider.tsx", "template": "templates/base/slider.tsx"}]
     }
-  ]
-} 
+  }
+}

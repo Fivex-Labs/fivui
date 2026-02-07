@@ -1,12 +1,15 @@
 {
   "name": "navigation-menu",
   "type": "components:ui",
-  "dependencies": ["@radix-ui/react-navigation-menu", "lucide-react"],
   "registryDependencies": ["utils"],
-  "files": [
-    {
-      "name": "navigation-menu.tsx",
-      "template": "templates/navigation-menu.tsx"
+  "variants": {
+    "radix": {
+      "dependencies": ["@radix-ui/react-navigation-menu", "lucide-react"],
+      "files": [{"name": "navigation-menu.tsx", "template": "templates/navigation-menu.tsx"}]
+    },
+    "base": {
+      "dependencies": ["@base-ui/react/navigation-menu", "lucide-react"],
+      "files": [{"name": "navigation-menu.tsx", "template": "templates/base/navigation-menu.tsx"}]
     }
-  ]
-} 
+  }
+}

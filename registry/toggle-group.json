@@ -1,17 +1,15 @@
 {
   "name": "toggle-group",
   "type": "components:ui",
-  "dependencies": [
-    "@radix-ui/react-toggle-group",
-    "class-variance-authority"
-  ],
-  "registryDependencies": [
-    "toggle"
-  ],
-  "files": [
-    {
-      "name": "toggle-group.tsx",
-      "template": "templates/toggle-group.tsx"
+  "registryDependencies": ["toggle"],
+  "variants": {
+    "radix": {
+      "dependencies": ["@radix-ui/react-toggle-group", "class-variance-authority"],
+      "files": [{"name": "toggle-group.tsx", "template": "templates/toggle-group.tsx"}]
+    },
+    "base": {
+      "dependencies": ["@base-ui/react/toggle-group", "class-variance-authority"],
+      "files": [{"name": "toggle-group.tsx", "template": "templates/base/toggle-group.tsx"}]
     }
-  ]
-} 
+  }
+}

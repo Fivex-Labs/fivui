@@ -1,12 +1,15 @@
 {
   "name": "scroll-area",
   "type": "components:ui",
-  "dependencies": ["@radix-ui/react-scroll-area"],
   "registryDependencies": ["utils"],
-  "files": [
-    {
-      "name": "scroll-area.tsx",
-      "template": "templates/scroll-area.tsx"
+  "variants": {
+    "radix": {
+      "dependencies": ["@radix-ui/react-scroll-area"],
+      "files": [{"name": "scroll-area.tsx", "template": "templates/scroll-area.tsx"}]
+    },
+    "base": {
+      "dependencies": ["@base-ui/react/scroll-area"],
+      "files": [{"name": "scroll-area.tsx", "template": "templates/base/scroll-area.tsx"}]
     }
-  ]
-} 
+  }
+}

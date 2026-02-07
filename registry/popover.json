@@ -1,14 +1,15 @@
 {
   "name": "popover",
   "type": "components:ui",
-  "dependencies": [
-    "@radix-ui/react-popover"
-  ],
   "registryDependencies": [],
-  "files": [
-    {
-      "name": "popover.tsx",
-      "template": "templates/popover.tsx"
+  "variants": {
+    "radix": {
+      "dependencies": ["@radix-ui/react-popover"],
+      "files": [{"name": "popover.tsx", "template": "templates/popover.tsx"}]
+    },
+    "base": {
+      "dependencies": ["@base-ui/react/popover"],
+      "files": [{"name": "popover.tsx", "template": "templates/base/popover.tsx"}]
     }
-  ]
-} 
+  }
+}

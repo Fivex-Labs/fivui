@@ -1,12 +1,15 @@
 {
   "name": "sheet",
   "type": "components:ui",
-  "dependencies": ["@radix-ui/react-dialog", "lucide-react"],
   "registryDependencies": ["utils"],
-  "files": [
-    {
-      "name": "sheet.tsx",
-      "template": "templates/sheet.tsx"
+  "variants": {
+    "radix": {
+      "dependencies": ["@radix-ui/react-dialog", "lucide-react"],
+      "files": [{"name": "sheet.tsx", "template": "templates/sheet.tsx"}]
+    },
+    "base": {
+      "dependencies": ["@base-ui/react/dialog", "lucide-react"],
+      "files": [{"name": "sheet.tsx", "template": "templates/base/sheet.tsx"}]
     }
-  ]
-} 
+  }
+}

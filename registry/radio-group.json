@@ -1,12 +1,15 @@
 {
   "name": "radio-group",
   "type": "components:ui",
-  "dependencies": ["@radix-ui/react-radio-group", "lucide-react"],
   "registryDependencies": ["utils"],
-  "files": [
-    {
-      "name": "radio-group.tsx",
-      "template": "templates/radio-group.tsx"
+  "variants": {
+    "radix": {
+      "dependencies": ["@radix-ui/react-radio-group", "lucide-react"],
+      "files": [{"name": "radio-group.tsx", "template": "templates/radio-group.tsx"}]
+    },
+    "base": {
+      "dependencies": ["@base-ui/react/radio", "lucide-react"],
+      "files": [{"name": "radio-group.tsx", "template": "templates/base/radio-group.tsx"}]
     }
-  ]
-} 
+  }
+}

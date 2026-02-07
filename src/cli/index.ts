@@ -11,7 +11,7 @@ const program = new Command();
 program
   .name('fivui')
   .description('FivUI CLI - A modern UI component library for React')
-  .version('1.3.7');
+  .version('1.4.0');
 
 function detectTailwindVersion(): '3' | '4' | null {
   try {
@@ -132,7 +132,9 @@ function installDependencies(dependencies: string[]) {
   }
 }
 
-function copyComponent(componentName: string) {
+type UiLibrary = 'radix' | 'base';
+
+function copyComponent(componentName: string, uiLibrary?: UiLibrary) {
   const workspace = detectWorkspace();
   const configPath = findComponentsConfig(workspace);
   
@@ -159,22 +161,41 @@ function copyComponent(componentName: string) {
   try {
     const registry = JSON.parse(readFileSync(registryPath, 'utf8')) as any;
     
+    // Resolve variant: registry may have variants (radix/base) or flat dependencies/files
+    let dependencies: string[] = [];
+    let files: { name: string; template: string }[] = [];
+    if (registry.variants) {
+      const library = uiLibrary ?? config.uiLibrary ?? 'radix';
+      const variant = registry.variants[library];
+      if (!variant) {
+        console.log(`\n❌ ${componentName} does not support "${library}". Use --radix or --base.`);
+        return;
+      }
+      dependencies = variant.dependencies ?? [];
+      files = variant.files ?? [];
+    } else {
+      dependencies = registry.dependencies ?? [];
+      files = registry.files ?? [];
+    }
+    
+    const effectiveUiLibrary = registry.variants ? (uiLibrary ?? config.uiLibrary ?? 'radix') : undefined;
+    
     // Install dependencies first
-    if (registry.dependencies && registry.dependencies.length > 0) {
-      installDependencies(registry.dependencies);
+    if (dependencies.length > 0) {
+      installDependencies(dependencies);
     }
     
     // Handle registry dependencies (like utils)
     if (registry.registryDependencies && registry.registryDependencies.length > 0) {
       for (const dep of registry.registryDependencies) {
         if (dep !== componentName) { // Avoid infinite recursion
-          copyComponent(dep);
+          copyComponent(dep, effectiveUiLibrary);
         }
       }
     }
     
     // Copy files using workspace-aware paths
-    for (const file of registry.files) {
+    for (const file of files) {
       let targetPath: string;
       
       if (registry.type === 'components:ui') {
@@ -309,7 +330,7 @@ function getAllAvailableComponents(): string[] {
   }
 }
 
-function addAllComponents() {
+function addAllComponents(uiLibrary?: UiLibrary) {
   const components = getAllAvailableComponents();
   
   if (components.length === 0) {
@@ -331,7 +352,7 @@ function addAllComponents() {
     
     try {
       console.log(`📦 Processing ${component}...`);
-      copyComponent(component);
+      copyComponent(component, uiLibrary);
       processedComponents.add(component);
       successCount++;
     } catch (error) {
@@ -356,20 +377,22 @@ program
   .option('--tailwind-version <version>', 'TailwindCSS version (3, 4)', '4')
   .option('--css-variables', 'Use CSS variables for theming (default: true)')
   .option('--no-css-variables', 'Use utility classes for theming')
+  .option('--ui-library <library>', 'UI primitive library (radix, base)', 'radix')
   .option('--force', 'Overwrite existing configuration')
-  .action(async (options) => {
+  .action(async (_args, cmd) => {
+    const options = cmd.opts();
     // Validate base color
     const validColors = ['slate', 'gray', 'zinc', 'neutral', 'stone'];
     const baseColor = validColors.includes(options.baseColor) ? options.baseColor : 'neutral';
-    
     const tailwindVersion = options.tailwindVersion === '3' ? '3' : '4';
     const cssVariables = options.cssVariables !== false; // Default to true unless --no-css-variables
-    
+    const uiLibrary = options.uiLibrary === 'base' ? 'base' : 'radix';
     await initProject({
       monorepo: options.monorepo,
       baseColor,
       tailwindVersion,
       cssVariables,
+      uiLibrary,
       force: options.force,
     });
   });
@@ -385,23 +408,33 @@ program
   .command('add')
   .description('Add components to your project')
   .argument('<components...>', 'Component names to add')
-  .action((components) => {
+  .option('--radix', 'Use Radix UI primitives for components that support variants')
+  .option('--base', 'Use Base UI primitives for components that support variants')
+  .action((components, cmd) => {
+    const options = cmd.opts();
+    let uiLibrary: UiLibrary | undefined;
+    if (options.radix) uiLibrary = 'radix';
+    else if (options.base) uiLibrary = 'base';
+    if (options.radix && options.base) {
+      console.log('\n❌ Use either --radix or --base, not both.');
+      return;
+    }
     if (components && components.length > 0) {
       console.log(`\n🚀 Adding ${components.length} component${components.length > 1 ? 's' : ''}: ${components.join(', ')}\n`);
-      
+      if (uiLibrary) {
+        console.log(`📚 Using ${uiLibrary === 'radix' ? 'Radix UI' : 'Base UI'} primitives.\n`);
+      }
       const processedComponents = new Set<string>();
       let successCount = 0;
       let failureCount = 0;
-      
       for (const component of components) {
         if (processedComponents.has(component)) {
           console.log(`⏭️  Skipping ${component} (already processed)`);
           continue;
         }
-        
         try {
           console.log(`📦 Processing ${component}...`);
-          copyComponent(component);
+          copyComponent(component, uiLibrary);
           processedComponents.add(component);
           successCount++;
         } catch (error) {
@@ -409,7 +442,6 @@ program
           failureCount++;
         }
       }
-      
       console.log(`\n📊 Summary:`);
       console.log(`✅ Successfully added: ${successCount} component${successCount !== 1 ? 's' : ''}`);
       if (failureCount > 0) {
@@ -420,8 +452,9 @@ program
       console.log('Usage: fivui add <component> [component2] [component3] ...');
       console.log('\nExamples:');
       console.log('  fivui add button');
+      console.log('  fivui add button --radix');
+      console.log('  fivui add button --base');
       console.log('  fivui add button calendar popover');
-      console.log('  fivui add button input select checkbox');
     }
   });
 
@@ -430,28 +463,35 @@ program
   .description('List all available components')
   .action(() => {
     const components = getAllAvailableComponents();
-    
     if (components.length === 0) {
       console.log('❌ No components available.');
       return;
     }
-    
     console.log('\n📋 Available Components:');
     console.log('========================');
-    
     components.forEach((component, index) => {
       console.log(`${index + 1}. ${component}`);
     });
-    
     console.log(`\n💡 Use 'fivui add <component>' to add a component.`);
+    console.log('💡 Use --radix or --base to choose UI primitives (e.g. fivui add button --base).');
     console.log('💡 Use "fivui add all" to add all components at once.');
   });
 
 program
   .command('all')
   .description('Add all available components')
-  .action(() => {
-    addAllComponents();
+  .option('--radix', 'Use Radix UI primitives for components that support variants')
+  .option('--base', 'Use Base UI primitives for components that support variants')
+  .action((_args, cmd) => {
+    const options = cmd.opts();
+    let uiLibrary: UiLibrary | undefined;
+    if (options.radix) uiLibrary = 'radix';
+    else if (options.base) uiLibrary = 'base';
+    if (options.radix && options.base) {
+      console.log('\n❌ Use either --radix or --base, not both.');
+      return;
+    }
+    addAllComponents(uiLibrary);
   });
 
 program.parse(); 

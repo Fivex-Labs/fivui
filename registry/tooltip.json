@@ -1,12 +1,15 @@
 {
   "name": "tooltip",
   "type": "components:ui",
-  "dependencies": ["@radix-ui/react-tooltip"],
   "registryDependencies": ["utils"],
-  "files": [
-    {
-      "name": "tooltip.tsx",
-      "template": "templates/tooltip.tsx"
+  "variants": {
+    "radix": {
+      "dependencies": ["@radix-ui/react-tooltip"],
+      "files": [{"name": "tooltip.tsx", "template": "templates/tooltip.tsx"}]
+    },
+    "base": {
+      "dependencies": ["@base-ui/react/tooltip"],
+      "files": [{"name": "tooltip.tsx", "template": "templates/base/tooltip.tsx"}]
     }
-  ]
-} 
+  }
+}

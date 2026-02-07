@@ -12,6 +12,7 @@ export interface InitOptions {
   cssVariables?: boolean;
   force?: boolean;
   tailwindVersion?: '3' | '4';
+  uiLibrary?: 'radix' | 'base';
 }
 
 export async function initProject(options: InitOptions = {}) {
@@ -22,7 +23,8 @@ export async function initProject(options: InitOptions = {}) {
                        (options.tailwindVersion && options.tailwindVersion !== '4') ||
                        options.cssVariables === false || // Only if explicitly set to false
                        options.force || 
-                       options.monorepo;
+                       options.monorepo ||
+                       options.uiLibrary === 'base';
   
   if (hasCliOptions) {
     // Use CLI options directly (backward compatibility)
@@ -113,6 +115,16 @@ async function runInteractiveSetup(_cliOptions: InitOptions) {
         name: 'rsc',
         message: 'Are you using React Server Components?',
         initial: true
+      },
+      {
+        type: 'select' as const,
+        name: 'uiLibrary',
+        message: 'Which UI primitive library would you like to use?',
+        choices: [
+          { title: 'Radix UI (established, widely used)', value: 'radix' },
+          { title: 'Base UI (modern, by MUI team)', value: 'base' }
+        ],
+        initial: 0
       }
     ]);
 
@@ -140,6 +152,7 @@ async function runInteractiveSetup(_cliOptions: InitOptions) {
     console.log(`   CSS Variables: ${responses.cssVariables ? 'Yes' : 'No'}`);
     console.log(`   TailwindCSS: v${responses.tailwindVersion}.x`);
     console.log(`   TypeScript: ${responses.typescript ? 'Yes' : 'No'}`);
+    console.log(`   UI Library: ${responses.uiLibrary === 'base' ? 'Base UI' : 'Radix UI'}`);
 
     const confirmSetup = await prompts({
       type: 'confirm' as const,
@@ -216,6 +229,7 @@ async function executeSetup(responses: any, workspace: any, _cliOptions: InitOpt
     style: responses.style,
     tsx: responses.typescript,
     rsc: responses.rsc,
+    uiLibrary: responses.uiLibrary ?? 'radix',
     tailwind: {
       config: responses.tailwindConfig || '',
       css: responses.globalCss,
@@ -405,6 +419,7 @@ async function runDirectSetup(options: InitOptions) {
     componentsAlias: workspace.type === 'single' ? '@/components' : '@workspace/ui/components',
     utilsAlias: workspace.type === 'single' ? '@/lib/utils' : '@workspace/ui/lib/utils',
     rsc: true, // Default to true
+    uiLibrary: options.uiLibrary ?? 'radix',
     overwriteConfig: options.force || false,
     overwriteGlobalCss: options.force ? 'overwrite' : 'append'
   };

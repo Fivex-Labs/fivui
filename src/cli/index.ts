@@ -11,7 +11,7 @@ const program = new Command();
 program
   .name('fivui')
   .description('FivUI CLI - A modern UI component library for React')
-  .version('1.4.1');
+  .version('1.4.2');
 
 function detectTailwindVersion(): '3' | '4' | null {
   try {
@@ -379,8 +379,7 @@ program
   .option('--no-css-variables', 'Use utility classes for theming')
   .option('--ui-library <library>', 'UI primitive library (radix, base)', 'radix')
   .option('--force', 'Overwrite existing configuration')
-  .action(async (_args, cmd) => {
-    const options = cmd.opts();
+  .action(async (options) => {
     // Validate base color
     const validColors = ['slate', 'gray', 'zinc', 'neutral', 'stone'];
     const baseColor = validColors.includes(options.baseColor) ? options.baseColor : 'neutral';
@@ -410,8 +409,7 @@ program
   .argument('<components...>', 'Component names to add')
   .option('--radix', 'Use Radix UI primitives for components that support variants')
   .option('--base', 'Use Base UI primitives for components that support variants')
-  .action((components, cmd) => {
-    const options = cmd.opts();
+  .action((components, options) => {
     let uiLibrary: UiLibrary | undefined;
     if (options.radix) uiLibrary = 'radix';
     else if (options.base) uiLibrary = 'base';
@@ -482,8 +480,7 @@ program
   .description('Add all available components')
   .option('--radix', 'Use Radix UI primitives for components that support variants')
   .option('--base', 'Use Base UI primitives for components that support variants')
-  .action((_args, cmd) => {
-    const options = cmd.opts();
+  .action((options) => {
     let uiLibrary: UiLibrary | undefined;
     if (options.radix) uiLibrary = 'radix';
     else if (options.base) uiLibrary = 'base';

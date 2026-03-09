@@ -10,6 +10,10 @@
     "base": {
       "dependencies": ["@base-ui/react/tabs"],
       "files": [{"name": "tabs.tsx", "template": "templates/base/tabs.tsx"}]
+    },
+    "ark": {
+      "dependencies": ["@ark-ui/react"],
+      "files": [{"name": "tabs.tsx", "template": "templates/ark/tabs.tsx"}]
     }
   }
 }

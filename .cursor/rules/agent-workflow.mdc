@@ -1,0 +1,32 @@
+# FivUI Library - Agent Workflow
+
+When asked to create or add a new component to FivUI, follow this workflow:
+
+## 1. Create the Component Template
+
+- Add the component in `templates/` (e.g. `templates/button.tsx`)
+- For components with variants, add to `templates/base/` (Base UI) and `templates/ark/` (Ark UI) when supported
+- Use `@/` import paths that resolve in user projects
+
+## 2. Create the Registry Entry
+
+- Add `registry/<component-name>.json`
+- Define `type`, `registryDependencies`, `dependencies`, `files`
+- For variant-aware components, use `variants.radix`, `variants.base`, `variants.ark`
+
+## 3. Test Locally
+
+- Run `npm run build`
+- Test with `node dist/cli/index.js add <component>` in a test project
+
+## 4. Update CHANGELOG.md
+
+- Add entry under `[Unreleased]` with the new component and features
+
+## 5. Bump Version
+
+- Update `version` in `package.json` (patch for fixes, minor for new components)
+
+## 6. Commit and Push
+
+- Commit changes and push to `main` branch

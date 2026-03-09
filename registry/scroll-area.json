@@ -10,6 +10,10 @@
     "base": {
       "dependencies": ["@base-ui/react/scroll-area"],
       "files": [{"name": "scroll-area.tsx", "template": "templates/base/scroll-area.tsx"}]
+    },
+    "ark": {
+      "dependencies": [],
+      "files": [{"name": "scroll-area.tsx", "template": "templates/ark/scroll-area.tsx"}]
     }
   }
 }

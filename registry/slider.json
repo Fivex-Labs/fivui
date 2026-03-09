@@ -10,6 +10,10 @@
     "base": {
       "dependencies": ["@base-ui/react/slider"],
       "files": [{"name": "slider.tsx", "template": "templates/base/slider.tsx"}]
+    },
+    "ark": {
+      "dependencies": ["@ark-ui/react"],
+      "files": [{"name": "slider.tsx", "template": "templates/ark/slider.tsx"}]
     }
   }
 }

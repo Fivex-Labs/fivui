@@ -10,6 +10,10 @@
     "base": {
       "dependencies": ["@base-ui/react/checkbox", "lucide-react"],
       "files": [{"name": "checkbox.tsx", "template": "templates/base/checkbox.tsx"}]
+    },
+    "ark": {
+      "dependencies": ["@ark-ui/react", "lucide-react"],
+      "files": [{"name": "checkbox.tsx", "template": "templates/ark/checkbox.tsx"}]
     }
   }
 }

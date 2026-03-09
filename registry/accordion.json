@@ -14,6 +14,10 @@
     "base": {
       "dependencies": ["@base-ui/react/accordion", "lucide-react"],
       "files": [{"name": "accordion.tsx", "template": "templates/base/accordion.tsx"}]
+    },
+    "ark": {
+      "dependencies": ["@ark-ui/react", "lucide-react"],
+      "files": [{"name": "accordion.tsx", "template": "templates/ark/accordion.tsx"}]
     }
   }
 }

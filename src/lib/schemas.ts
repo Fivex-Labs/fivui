@@ -1,6 +1,10 @@
+/** FivUI style presets (terrain-themed). Control border radius and visual density. */
+export type StylePreset = 'mesa' | 'ridge' | 'dune' | 'slate' | 'forge';
+
 export interface ComponentsConfig {
   $schema?: string;
-  style: 'default' | 'new-york';
+  /** Style preset: mesa (classic), ridge (compact), dune (soft), slate (sharp), forge (dense). */
+  style: StylePreset | 'default' | 'new-york'; // 'default'/'new-york' for backward compat
   rsc?: boolean;
   tsx: boolean;
   tailwind: {
@@ -8,11 +12,14 @@ export interface ComponentsConfig {
     css: string;
     baseColor?: 'slate' | 'gray' | 'zinc' | 'neutral' | 'stone';
     cssVariables?: boolean;
-    version?: '3' | '4';
+    version?: '4';
   };
-  iconLibrary?: 'lucide' | 'radix-icons';
-  /** UI primitive library: 'radix' (default) or 'base'. Used when adding components without --radix/--base flag. */
-  uiLibrary?: 'radix' | 'base';
+  /** Icon library for component templates. Affects which icon package is installed. */
+  iconLibrary?: 'lucide' | 'tabler' | 'remix' | 'phosphor' | 'hugeicons' | 'radix-icons';
+  /** Google Font for typography. Generates @import in globals.css. */
+  font?: string;
+  /** UI primitive library: 'radix' (default), 'base', or 'ark'. Used when adding components without --radix/--base/--ark flag. */
+  uiLibrary?: 'radix' | 'base' | 'ark';
   aliases: {
     components: string;
     utils: string;
@@ -43,10 +50,11 @@ export interface RegistryComponent {
   dependencies?: string[];
   devDependencies?: string[];
   files?: { name: string; template: string }[];
-  /** Variant-aware format (radix | base) */
+  /** Variant-aware format (radix | base | ark) */
   variants?: {
     radix?: RegistryComponentVariant;
     base?: RegistryComponentVariant;
+    ark?: RegistryComponentVariant;
   };
 }
 
@@ -59,14 +67,15 @@ export interface WorkspaceInfo {
 
 export const DEFAULT_COMPONENTS_CONFIG: ComponentsConfig = {
   $schema: 'https://ui.fivexlabs.com/fivui.schema.json',
-  style: 'default',
+  style: 'mesa',
   tsx: true,
   uiLibrary: 'radix',
   tailwind: {
-    config: 'tailwind.config.js',
+    config: '',
     css: 'src/styles/globals.css',
     baseColor: 'neutral',
     cssVariables: true,
+    version: '4',
   },
   aliases: {
     components: '@/components',
@@ -79,14 +88,15 @@ export const DEFAULT_COMPONENTS_CONFIG: ComponentsConfig = {
 
 export const MONOREPO_COMPONENTS_CONFIG: ComponentsConfig = {
   $schema: 'https://ui.fivexlabs.com/fivui.schema.json',
-  style: 'default',
+  style: 'mesa',
   tsx: true,
   uiLibrary: 'radix',
   tailwind: {
-    config: 'tailwind.config.js',
+    config: '',
     css: 'packages/ui/src/styles/globals.css',
     baseColor: 'neutral',
     cssVariables: true,
+    version: '4',
   },
   aliases: {
     components: '@workspace/ui/components',

@@ -10,6 +10,10 @@
     "base": {
       "dependencies": ["@base-ui/react/dialog", "lucide-react"],
       "files": [{"name": "sheet.tsx", "template": "templates/base/sheet.tsx"}]
+    },
+    "ark": {
+      "dependencies": ["@ark-ui/react", "lucide-react"],
+      "files": [{"name": "sheet.tsx", "template": "templates/ark/sheet.tsx"}]
     }
   }
 }

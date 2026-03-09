@@ -10,6 +10,10 @@
     "base": {
       "dependencies": [],
       "files": [{"name": "aspect-ratio.tsx", "template": "templates/base/aspect-ratio.tsx"}]
+    },
+    "ark": {
+      "dependencies": [],
+      "files": [{"name": "aspect-ratio.tsx", "template": "templates/ark/aspect-ratio.tsx"}]
     }
   }
 }

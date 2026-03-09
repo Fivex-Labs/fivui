@@ -13,19 +13,21 @@ program
   .description('FivUI CLI - A modern UI component library for React')
   .version('1.4.2');
 
-function detectTailwindVersion(): '3' | '4' | null {
+function detectTailwindVersion(): '4' | null {
   try {
     // Check if tailwindcss is installed
     const tailwindPath = require.resolve('tailwindcss');
     const packageJson = require(join(dirname(tailwindPath), 'package.json'));
     const version = packageJson.version;
-    
+
     if (version.startsWith('3.')) {
-      return '3';
-    } else if (version.startsWith('4.')) {
+      console.log('\n⚠️  TailwindCSS v3.x detected. FivUI requires TailwindCSS v4.x.');
+      console.log('   Please upgrade: npm install tailwindcss@^4.0.0\n');
+      return null;
+    }
+    if (version.startsWith('4.')) {
       return '4';
     }
-    
     return null;
   } catch (error) {
     return null;
@@ -40,12 +42,9 @@ function showSetupInstructions() {
   console.log('\n🎨 FivUI Setup Guide\n');
   
   if (!tailwindVersion) {
-    console.log('❌ TailwindCSS not found in your project.');
-    console.log('\nPlease install TailwindCSS first:');
-    console.log('  # For latest version (v4.x - recommended)');
+    console.log('❌ TailwindCSS v4.x not found in your project.');
+    console.log('\nPlease install TailwindCSS v4:');
     console.log('  npm install tailwindcss@^4.0.0');
-    console.log('\n  # Or for v3.x');
-    console.log('  npm install tailwindcss@^3.0.0');
     console.log('\nThen run this command again.');
     return;
   }
@@ -69,38 +68,20 @@ function showSetupInstructions() {
   }
   
   console.log('📋 Tailwind CSS Setup Instructions:');
-  
-  if (tailwindVersion === '4') {
-    console.log('✨ TailwindCSS v4.x Configuration:');
-    console.log('  1. Add to your CSS file:');
-    console.log('     @import "tailwindcss";');
-    console.log('');
-    console.log('  2. No config file needed! 🎉');
-    console.log('     • Configuration is done directly in CSS using @theme directive');
-    console.log('     • Built-in support for CSS variables and modern features');
-    console.log('     • Automatic content detection (no need to configure paths)');
-    console.log('');
-    console.log('  3. Optional customization in CSS:');
-    console.log('     @theme {');
-    console.log('       --color-primary: #3b82f6;');
-    console.log('       --font-heading: "Inter", sans-serif;');
-    console.log('     }');
-  } else {
-    console.log('⚙️  TailwindCSS v3.x Configuration:');
-    console.log('  1. Add to your CSS file:');
-    console.log('     @tailwind base;');
-    console.log('     @tailwind components;');
-    console.log('     @tailwind utilities;');
-    console.log('');
-    console.log('  2. Create/update tailwind.config.js:');
-    console.log('     module.exports = {');
-    console.log('       content: ["./src/**/*.{js,ts,jsx,tsx}"],');
-    console.log('       theme: { extend: {} },');
-    console.log('       plugins: [],');
-    console.log('     }');
-    console.log('');
-    console.log('  💡 Consider upgrading to v4.x for better DX!');
-  }
+  console.log('✨ TailwindCSS v4.x Configuration:');
+  console.log('  1. Add to your CSS file:');
+  console.log('     @import "tailwindcss";');
+  console.log('');
+  console.log('  2. No config file needed! 🎉');
+  console.log('     • Configuration is done directly in CSS using @theme directive');
+  console.log('     • Built-in support for CSS variables and modern features');
+  console.log('     • Automatic content detection (no need to configure paths)');
+  console.log('');
+  console.log('  3. Optional customization in CSS:');
+  console.log('     @theme {');
+  console.log('       --color-primary: #3b82f6;');
+  console.log('       --font-heading: "Inter", sans-serif;');
+  console.log('     }');
   
   console.log('\n🚀 Ready to use FivUI!');
   console.log('Next: fivui add button');
@@ -132,7 +113,7 @@ function installDependencies(dependencies: string[]) {
   }
 }
 
-type UiLibrary = 'radix' | 'base';
+type UiLibrary = 'radix' | 'base' | 'ark';
 
 function copyComponent(componentName: string, uiLibrary?: UiLibrary) {
   const workspace = detectWorkspace();
@@ -168,7 +149,7 @@ function copyComponent(componentName: string, uiLibrary?: UiLibrary) {
       const library = uiLibrary ?? config.uiLibrary ?? 'radix';
       const variant = registry.variants[library];
       if (!variant) {
-        console.log(`\n❌ ${componentName} does not support "${library}". Use --radix or --base.`);
+        console.log(`\n❌ ${componentName} does not support "${library}". Use --radix, --base, or --ark.`);
         return;
       }
       dependencies = variant.dependencies ?? [];
@@ -178,7 +159,7 @@ function copyComponent(componentName: string, uiLibrary?: UiLibrary) {
       files = registry.files ?? [];
     }
     
-    const effectiveUiLibrary = registry.variants ? (uiLibrary ?? config.uiLibrary ?? 'radix') : undefined;
+    const effectiveUiLibrary = uiLibrary ?? config.uiLibrary ?? 'radix';
     
     // Install dependencies first
     if (dependencies.length > 0) {
@@ -250,8 +231,7 @@ function copyComponent(componentName: string, uiLibrary?: UiLibrary) {
     
     // Handle keyframes if component has them
     if (registry.keyframes && registry.keyframes.length > 0) {
-      const tailwindVersion = config.tailwind.version || '4';
-      const keyframeName = `${componentName}-v${tailwindVersion}`;
+      const keyframeName = `${componentName}-v4`;
       
       // Find the appropriate keyframes for the TailwindCSS version
       const keyframes = registry.keyframes.find((kf: any) => kf.name === keyframeName);
@@ -374,22 +354,26 @@ program
   .description('Initialize FivUI in your project')
   .option('--monorepo', 'Initialize as monorepo')
   .option('--base-color <color>', 'Base color for components (slate, gray, zinc, neutral, stone)', 'neutral')
-  .option('--tailwind-version <version>', 'TailwindCSS version (3, 4)', '4')
+  .option('--style <style>', 'Style preset (mesa, ridge, dune, slate, forge)', 'mesa')
+  .option('--icon-library <lib>', 'Icon library (lucide, tabler, remix, phosphor, hugeicons, radix-icons)', 'lucide')
   .option('--css-variables', 'Use CSS variables for theming (default: true)')
   .option('--no-css-variables', 'Use utility classes for theming')
-  .option('--ui-library <library>', 'UI primitive library (radix, base)', 'radix')
+  .option('--ui-library <library>', 'UI primitive library (radix, base, ark)', 'radix')
   .option('--force', 'Overwrite existing configuration')
   .action(async (options) => {
-    // Validate base color
     const validColors = ['slate', 'gray', 'zinc', 'neutral', 'stone'];
+    const validStyles = ['mesa', 'ridge', 'dune', 'slate', 'forge'];
+    const validIconLibs = ['lucide', 'tabler', 'remix', 'phosphor', 'hugeicons', 'radix-icons'];
     const baseColor = validColors.includes(options.baseColor) ? options.baseColor : 'neutral';
-    const tailwindVersion = options.tailwindVersion === '3' ? '3' : '4';
-    const cssVariables = options.cssVariables !== false; // Default to true unless --no-css-variables
-    const uiLibrary = options.uiLibrary === 'base' ? 'base' : 'radix';
+    const style = validStyles.includes(options.style) ? options.style : 'mesa';
+    const iconLibrary = validIconLibs.includes(options.iconLibrary) ? options.iconLibrary : 'lucide';
+    const cssVariables = options.cssVariables !== false;
+    const uiLibrary = ['base', 'ark'].includes(options.uiLibrary) ? options.uiLibrary : 'radix';
     await initProject({
       monorepo: options.monorepo,
       baseColor,
-      tailwindVersion,
+      style,
+      iconLibrary,
       cssVariables,
       uiLibrary,
       force: options.force,
@@ -409,18 +393,22 @@ program
   .argument('<components...>', 'Component names to add')
   .option('--radix', 'Use Radix UI primitives for components that support variants')
   .option('--base', 'Use Base UI primitives for components that support variants')
+  .option('--ark', 'Use Ark UI primitives for components that support variants')
   .action((components, options) => {
     let uiLibrary: UiLibrary | undefined;
     if (options.radix) uiLibrary = 'radix';
     else if (options.base) uiLibrary = 'base';
-    if (options.radix && options.base) {
-      console.log('\n❌ Use either --radix or --base, not both.');
+    else if (options.ark) uiLibrary = 'ark';
+    const libCount = [options.radix, options.base, options.ark].filter(Boolean).length;
+    if (libCount > 1) {
+      console.log('\n❌ Use only one of --radix, --base, or --ark.');
       return;
     }
     if (components && components.length > 0) {
       console.log(`\n🚀 Adding ${components.length} component${components.length > 1 ? 's' : ''}: ${components.join(', ')}\n`);
       if (uiLibrary) {
-        console.log(`📚 Using ${uiLibrary === 'radix' ? 'Radix UI' : 'Base UI'} primitives.\n`);
+        const libNames: Record<UiLibrary, string> = { radix: 'Radix UI', base: 'Base UI', ark: 'Ark UI' };
+        console.log(`📚 Using ${libNames[uiLibrary]} primitives.\n`);
       }
       const processedComponents = new Set<string>();
       let successCount = 0;
@@ -452,6 +440,7 @@ program
       console.log('  fivui add button');
       console.log('  fivui add button --radix');
       console.log('  fivui add button --base');
+      console.log('  fivui add button --ark');
       console.log('  fivui add button calendar popover');
     }
   });
@@ -471,7 +460,7 @@ program
       console.log(`${index + 1}. ${component}`);
     });
     console.log(`\n💡 Use 'fivui add <component>' to add a component.`);
-    console.log('💡 Use --radix or --base to choose UI primitives (e.g. fivui add button --base).');
+    console.log('💡 Use --radix, --base, or --ark to choose UI primitives (e.g. fivui add button --base).');
     console.log('💡 Use "fivui add all" to add all components at once.');
   });
 
@@ -480,12 +469,15 @@ program
   .description('Add all available components')
   .option('--radix', 'Use Radix UI primitives for components that support variants')
   .option('--base', 'Use Base UI primitives for components that support variants')
+  .option('--ark', 'Use Ark UI primitives for components that support variants')
   .action((options) => {
     let uiLibrary: UiLibrary | undefined;
     if (options.radix) uiLibrary = 'radix';
     else if (options.base) uiLibrary = 'base';
-    if (options.radix && options.base) {
-      console.log('\n❌ Use either --radix or --base, not both.');
+    else if (options.ark) uiLibrary = 'ark';
+    const libCount = [options.radix, options.base, options.ark].filter(Boolean).length;
+    if (libCount > 1) {
+      console.log('\n❌ Use only one of --radix, --base, or --ark.');
       return;
     }
     addAllComponents(uiLibrary);

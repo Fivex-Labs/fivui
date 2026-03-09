@@ -10,6 +10,10 @@
     "base": {
       "dependencies": ["@base-ui/react/switch"],
       "files": [{"name": "switch.tsx", "template": "templates/base/switch.tsx"}]
+    },
+    "ark": {
+      "dependencies": ["@ark-ui/react"],
+      "files": [{"name": "switch.tsx", "template": "templates/ark/switch.tsx"}]
     }
   }
 }

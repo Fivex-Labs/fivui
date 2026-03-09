@@ -10,6 +10,10 @@
     "base": {
       "dependencies": ["@base-ui/react/field", "class-variance-authority"],
       "files": [{"name": "label.tsx", "template": "templates/base/label.tsx"}]
+    },
+    "ark": {
+      "dependencies": ["@ark-ui/react", "class-variance-authority"],
+      "files": [{"name": "label.tsx", "template": "templates/ark/label.tsx"}]
     }
   }
 }

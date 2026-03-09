@@ -10,6 +10,10 @@
     "base": {
       "dependencies": ["@base-ui/react/button", "class-variance-authority", "lucide-react"],
       "files": [{"name": "sidebar.tsx", "template": "templates/base/sidebar.tsx"}]
+    },
+    "ark": {
+      "dependencies": ["@ark-ui/react", "class-variance-authority", "lucide-react"],
+      "files": [{"name": "sidebar.tsx", "template": "templates/ark/sidebar.tsx"}]
     }
   }
 }

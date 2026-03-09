@@ -10,6 +10,10 @@
     "base": {
       "dependencies": ["@base-ui/react/context-menu", "lucide-react"],
       "files": [{"name": "context-menu.tsx", "template": "templates/base/context-menu.tsx"}]
+    },
+    "ark": {
+      "dependencies": ["@ark-ui/react", "lucide-react"],
+      "files": [{"name": "context-menu.tsx", "template": "templates/ark/context-menu.tsx"}]
     }
   }
 }

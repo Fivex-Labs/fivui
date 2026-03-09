@@ -10,6 +10,10 @@
     "base": {
       "dependencies": ["@base-ui/react/radio", "lucide-react"],
       "files": [{"name": "radio-group.tsx", "template": "templates/base/radio-group.tsx"}]
+    },
+    "ark": {
+      "dependencies": ["@ark-ui/react", "lucide-react"],
+      "files": [{"name": "radio-group.tsx", "template": "templates/ark/radio-group.tsx"}]
     }
   }
 }

@@ -10,6 +10,10 @@
     "base": {
       "dependencies": ["@base-ui/react/toggle-group", "class-variance-authority"],
       "files": [{"name": "toggle-group.tsx", "template": "templates/base/toggle-group.tsx"}]
+    },
+    "ark": {
+      "dependencies": ["@ark-ui/react", "class-variance-authority"],
+      "files": [{"name": "toggle-group.tsx", "template": "templates/ark/toggle-group.tsx"}]
     }
   }
 }

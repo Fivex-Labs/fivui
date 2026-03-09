@@ -7,9 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-03-10
+
 ### Added
+- **Ark UI support**: All 27+ variant-aware components now have Ark UI templates in `templates/ark/`. Use `fivui add <component> --ark` or `fivui init --ui-library ark` to install Ark UI variants.
+- **Style presets**: Mesa, Ridge, Dune, Slate, Forge (terrain-themed names). Each preset controls border radius and visual density. Configure via `--style` flag or interactive init prompt.
+- **Icon library selection**: Support for Lucide (default), Tabler, Remix, Phosphor, HugeIcons, and Radix Icons. Configure via `--icon-library` flag or init prompt.
+- **Font selection**: Choose Inter, Geist, Plus Jakarta Sans, or DM Sans during `fivui init`. The selected font is stored in `fivui.json` and a Google Fonts `@import` is prepended to `globals.css`.
+- **`--font` init option**: `fivui init --font geist` to configure fonts non-interactively.
 
 ### Changed
+- **Breaking: Tailwind v4 only**. FivUI now requires Tailwind CSS v4.x. The `--tailwind-version` CLI option, v3 setup prompts, and `templates/globals-v3.css` have been removed. Upgrade your project to Tailwind v4 before updating.
+- **CLI flag propagation fix**: The `--radix`, `--base`, and `--ark` flags are now correctly passed to all registry dependencies of composite components. For example, `fivui add data-table --ark` now installs its sub-components (DropdownMenu, Select, Checkbox, etc.) with the Ark UI variant.
+- **`command.tsx` library-agnostic type**: Removed the hard-coded `import { type DialogProps } from "@radix-ui/react-dialog"` in the Command template. `CommandDialogProps` is now derived from FivUI's own Dialog component, so it works regardless of the chosen primitive library.
+- **Path resolution fix**: `createDirectoryStructure` now uses the user's configured `componentsAlias` and `utilsAlias` to derive directory paths, instead of hardcoding `src/components/ui`.
+- **Base color theming**: `generateGlobalStyles` now loads the correct theme CSS file (e.g., `themes/slate-v4.css`) based on the selected base color, rather than always using the neutral theme.
+- **Schema URL**: Standardized to `https://ui.fivexlabs.com/fivui.schema.json` across all generated `fivui.json` files.
+
+### Removed
+- `templates/globals-v3.css` — Tailwind v3 CSS template deleted.
+- `--tailwind-version` CLI option — No longer needed; Tailwind v4 is the only supported version.
+- `tailwind.config.js` field from `ComponentsConfig` schema defaults — Tailwind v4 does not use a config file.
 
 ## [1.3.3] - 2025-01-17
 

@@ -12,6 +12,11 @@
       "dependencies": ["@base-ui/react/button", "class-variance-authority", "clsx", "tailwind-merge"],
       "devDependencies": [],
       "files": [{"name": "button.tsx", "template": "templates/base/button.tsx"}]
+    },
+    "ark": {
+      "dependencies": ["class-variance-authority", "clsx", "tailwind-merge"],
+      "devDependencies": [],
+      "files": [{"name": "button.tsx", "template": "templates/ark/button.tsx"}]
     }
   }
 }

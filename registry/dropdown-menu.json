@@ -10,6 +10,10 @@
     "base": {
       "dependencies": ["@base-ui/react/menu", "lucide-react"],
       "files": [{"name": "dropdown-menu.tsx", "template": "templates/base/dropdown-menu.tsx"}]
+    },
+    "ark": {
+      "dependencies": ["@ark-ui/react", "lucide-react"],
+      "files": [{"name": "dropdown-menu.tsx", "template": "templates/ark/dropdown-menu.tsx"}]
     }
   }
 }

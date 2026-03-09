@@ -41,7 +41,7 @@ const DualRangeSlider = React.forwardRef<
           <span className="text-sm">{renderLabel(values[1])}</span>
         </div>
       )}
-      <SliderPrimitive.Root
+      <SliderPrimitive.Root data-slot="dual-range-slider"
         ref={ref}
         className={cn(
           "relative flex w-full touch-none select-none items-center",
@@ -54,10 +54,10 @@ const DualRangeSlider = React.forwardRef<
           <SliderPrimitive.Range className="absolute h-full bg-primary" />
         </SliderPrimitive.Track>
         <SliderPrimitive.Thumb
-          className="block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+          className="block h-5 w-5 rounded-full border-2 border-primary bg-background transition-colors focus-visible:outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50"
         />
         <SliderPrimitive.Thumb
-          className="block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+          className="block h-5 w-5 rounded-full border-2 border-primary bg-background transition-colors focus-visible:outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50"
         />
       </SliderPrimitive.Root>
     </div>

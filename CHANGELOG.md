@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-03-10
+
+### Added
+- **New components**: ButtonGroup, InputGroup, Field (FieldLabel, FieldDescription, FieldError), Empty (EmptyIcon, EmptyTitle, EmptyDescription).
+- **Button size variants**: `xs`, `icon-xs`, `icon-sm`, `icon-lg` for finer control.
+- **Theme tokens**: Chart colors (`--chart-1` through `--chart-5`), sidebar tokens, `--destructive-foreground`, `tw-animate-css` import.
+- **@theme inline**: Theme CSS files now use `:root`/`.dark` + `@theme inline` for better Tailwind v4 integration.
+
+### Changed
+- **Modern destructive variant**: Buttons and badges now use subtle `bg-destructive/15 text-destructive` instead of bright red bg + white text for a modern look.
+- **Focus states**: Replaced `ring-offset-background` and `ring-2 ring-ring ring-offset-2` with `border-ring ring-ring/50 ring-[3px]` across all components.
+- **Input/Select**: `h-10` → `h-9`, `bg-background` → `bg-transparent`, added `shadow-xs`, `selection:bg-primary/20`, `aria-invalid` states.
+- **data-slot attributes**: All components now include `data-slot` for styling and targeting.
+- **Outline variant**: `bg-background` → `bg-transparent` for outline buttons.
+
+### Removed
+- `ring-offset-background` and `ring-offset-2` from all component focus styles.
+
 ## [2.0.0] - 2026-03-10
 
 ### Added

@@ -1,0 +1,11 @@
+{
+  "name": "empty",
+  "type": "components:ui",
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "name": "empty.tsx",
+      "template": "templates/empty.tsx"
+    }
+  ]
+}

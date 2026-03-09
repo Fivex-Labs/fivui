@@ -1,0 +1,11 @@
+{
+  "name": "field",
+  "type": "components:ui",
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "name": "field.tsx",
+      "template": "templates/field.tsx"
+    }
+  ]
+}

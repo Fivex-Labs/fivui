@@ -422,10 +422,11 @@ ${globalStyles}`;
 function showSetupComplete(_responses: any) {
   console.log('\n🎉 FivUI setup completed successfully!\n');
   console.log('📋 Next steps:');
-  console.log('  1. Ensure your CSS imports: @import "tailwindcss"');
-  console.log('  2. No config file needed for Tailwind v4! 🎉');
-  console.log('  3. Run: fivui add button');
-  console.log('  4. Start building! 🚀\n');
+  console.log('  1. Install animations: npm install tw-animate-css');
+  console.log('  2. Ensure your CSS imports: @import "tailwindcss"');
+  console.log('  3. No config file needed for Tailwind v4! 🎉');
+  console.log('  4. Run: fivui add button');
+  console.log('  5. Start building! 🚀\n');
   console.log('💡 Learn more: https://ui.fivexlabs.com/docs');
 }
 

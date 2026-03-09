@@ -17,10 +17,11 @@ const Label = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <LabelPrimitive.Root
     ref={ref}
+    data-slot="label"
     className={cn(labelVariants(), className)}
     {...props}
   />
 ))
 Label.displayName = LabelPrimitive.Root.displayName
 
-export { Label } 
+export { Label }

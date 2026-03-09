@@ -234,12 +234,12 @@ export const MultipleSelector = React.forwardRef<HTMLDivElement, MultipleSelecto
     )
 
     return (
-      <div ref={ref} className="relative">
+      <div ref={ref} data-slot="multiple-selector" className="relative">
         <div
           ref={containerRef}
           className={cn(
-            "flex min-h-10 w-full flex-wrap items-center gap-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background",
-            "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+            "flex min-h-10 w-full flex-wrap items-center gap-1 rounded-md border border-input bg-background px-3 py-2 text-sm",
+            "focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]",
             disabled && "cursor-not-allowed opacity-50",
             className
           )}
@@ -265,7 +265,7 @@ export const MultipleSelector = React.forwardRef<HTMLDivElement, MultipleSelecto
               {!option.fixed && (
                 <button
                   type="button"
-                  className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  className="ml-1 rounded-full outline-none focus:border-ring focus:ring-ring/50 focus:ring-[3px]"
                   onClick={(e) => {
                     e.preventDefault()
                     e.stopPropagation()

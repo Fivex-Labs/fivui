@@ -1,15 +1,13 @@
-# FivUI
+# FivUI (Deprecated)
 
-Beautiful, accessible components for modern web development. **Use this to build your own component library**.
+> **This package is deprecated and no longer maintained.**
 
-## Documentation
+FivUI has been retired in favor of **FivFold**, the modern full-stack scaffolding platform by Fivex Labs.
 
-Visit https://ui.fivexlabs.com to view the documentation.
+Please migrate to FivFold: [https://fold.fivexlabs.com/](https://fold.fivexlabs.com/)
 
-## Contributing
-
-Please read the [contributing guide](/CONTRIBUTING.md).
+Running `fivui` (or `npx @fivexlabs/fivui`) will print a deprecation error and exit with a non-zero code.
 
 ## License
 
-Licensed under the [MIT license](https://github.com/fivexlabs/fivui/blob/main/LICENSE).
+Licensed under the [MIT license](https://github.com/Fivex-Labs/fivui/blob/main/LICENSE).
